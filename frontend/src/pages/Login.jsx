@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as yup from 'yup';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import api from '../routes/api';
@@ -82,7 +83,7 @@ const Login = () => {
                     <div className="card-footer p-4">
                       <div className="text-center">
                         <span>Нет аккаунта?</span>
-                        <a href="/signup">Регистрация</a>
+                        <Link to="/login">Регистрация</Link>
                       </div>
                     </div>
                   </div>
