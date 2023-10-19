@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import api from '../routes/api';
+import entry from '../images/entry.jpg';
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -46,7 +47,7 @@ const Login = () => {
                 <div className="card shadow-sm">
                   <div className="card-body row p-5">
                     <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                      <img src="/" className="rounded-circle" alt="Войти" />
+                      <img src={entry} width={250} height={250} className="rounded-circle" alt="Войти" />
                     </div>
                     <Formik
                       initialValues={initialValues}

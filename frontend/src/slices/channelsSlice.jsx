@@ -8,7 +8,13 @@ const initialState = channelsAdapter.getInitialState({ status: 'idle', error: nu
 const channelsSlice = createSlice({
   name: 'channels',
   initialState,
-  reducers: {},
+  reducers: {
+    addChannel: channelsAdapter.addOne,
+    updateChannel: channelsAdapter.updateOne,
+    deleteChannel: ((state, action) => {
+      channelsAdapter.removeOne(state, action.payload);
+    }),
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getData.pending, (state) => {
@@ -34,6 +40,6 @@ const channelsSlice = createSlice({
   },
 });
 
-export const { actions } = channelsSlice;
+export const { addChannel, updateChannel, deleteChannel } = channelsSlice.actions;
 export const selectors = channelsAdapter.getSelectors((state) => state.channels);
 export default channelsSlice.reducer;
