@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -6,8 +6,8 @@ import { AuthContext } from '../contexts/AuthContext';
 import api from '../routes/api';
 
 const Login = () => {
-  const { isAuthenticated, login } = useContext(AuthContext);
-  const [error, setError] = useState('');
+  const { login } = useContext(AuthContext);
+  //   const [error, setError] = useState('');
 
   const initialValues = {
     username: '',
@@ -22,11 +22,11 @@ const Login = () => {
   const handleSubmit = async (values) => {
     try {
       const { data } = await axios.post(api.loginPath(), values);
-      const { token} = data;
+      const { token } = data;
       localStorage.setItem('token', token);
       login(token);
     } catch (er) {
-      setError('Ошибка авторизации. Проверьте введенные данные.', er);
+      console.log(er);
     }
   };
 
