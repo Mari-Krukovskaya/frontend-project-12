@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/AuthContext.jsx';
 import api from '../routes/api';
 import entry from '../images/entry.jpg';
 
@@ -15,7 +15,7 @@ const validation = yup.object().shape({
 
 const Login = () => {
   const { login } = useContext(AuthContext);
-  const [error, setError] = useState(false);
+  const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -24,7 +24,8 @@ const Login = () => {
       password: '',
     },
     validationSchema: validation,
-    onSubmit: async (values) => {
+    onSubmit: async (values, { setSubmitting }) => {
+      setAuthError(false);
       try {
         const { data } = await axios.post(api.loginPath(), values);
         const { token } = data;
@@ -32,12 +33,19 @@ const Login = () => {
         login(token);
         navigate('/');
       } catch (er) {
-        console.log(er);
-        setError(true);
+        setSubmitting(false);
+        setAuthError(true);
+        throw er;
       }
     },
   });
-
+  const {
+    handleSubmit,
+    handleChange,
+    values,
+    touched,
+    errors,
+  } = formik;
   return (
     <div className="h-100">
       <div className="h-100" id="chat">
@@ -45,7 +53,7 @@ const Login = () => {
           <nav className="shadow-sm navbar-expand-lg navbar-light bg-white">
             <div className="container">
               <a className="navbar-brand" href="/">
-                Hexlet Chat
+                Hexlet
               </a>
             </div>
           </nav>
@@ -63,18 +71,20 @@ const Login = () => {
                         alt="Войти"
                       />
                     </div>
-                    <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
+                    <Form onSubmit={handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
                       <h1 className="text-center mb-4">Войти</h1>
                       <Form.Group className="form-floating mb-3">
                         <Form.Control
                           type="text"
                           id="username"
                           name="username"
-                          value={formik.values.username}
-                          onChange={formik.handleChange}
+                          value={values.username}
+                          onChange={handleChange}
                           placeholder="Ваш ник"
                           className="form-control"
+                          isInvalid={touched.username && errors.username}
                         />
+                        <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
                         <Form.Label htmlFor="username">Ваш Ник</Form.Label>
                       </Form.Group>
                       <Form.Group className="form-floating mb-4">
@@ -82,11 +92,13 @@ const Login = () => {
                           type="password"
                           id="password"
                           name="password"
-                          value={formik.values.password}
-                          onChange={formik.handleChange}
+                          value={values.password}
+                          onChange={handleChange}
                           placeholder="Пароль"
                           className="form-control"
+                          isInvalid={(touched.password && errors.password) || authError}
                         />
+                        <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                         <Form.Label className="form-label" htmlFor="password">
                           Пароль
                         </Form.Label>
@@ -101,7 +113,7 @@ const Login = () => {
                         <Link to="/login">Регистрация</Link>
                       </div>
                     </div>
-                    <div className="text-danger text-center">{error}</div>
+                    <div className="text-danger text-center">{authError}</div>
                   </div>
                 </div>
               </div>

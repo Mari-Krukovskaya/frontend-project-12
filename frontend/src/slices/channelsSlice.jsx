@@ -3,7 +3,10 @@ import getData from '../apiData/getChatData';
 
 const channelsAdapter = createEntityAdapter();
 
-const initialState = channelsAdapter.getInitialState({ status: 'idle', error: null });
+const initialState = channelsAdapter.getInitialState({
+  status: 'idle',
+  error: null,
+});
 
 const channelsSlice = createSlice({
   name: 'channels',
@@ -12,8 +15,18 @@ const channelsSlice = createSlice({
     addChannel: channelsAdapter.addOne,
     updateChannel: channelsAdapter.updateOne,
     deleteChannel: ((state, action) => {
-      channelsAdapter.removeOne(state, action.payload);
+      const id = action.payload;
+      channelsAdapter.removeOne(state, id);
+      // eslint-disable-next-line no-param-reassign
+      if (id === state.currentChannelId) {
+        // eslint-disable-next-line no-param-reassign
+        state.currentChannelId = 1;
+      }
     }),
+    setCurrentChannelId: (state, action) => {
+      // eslint-disable-next-line no-param-reassign
+      state.currentChannelId = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -24,8 +37,11 @@ const channelsSlice = createSlice({
         state.error = null;
       })
       .addCase(getData.fulfilled, (state, action) => {
-        const { channels } = action.payload;
+        const { channels, currentChannelId } = action.payload;
         channelsAdapter.setAll(state, channels);
+        // eslint-disable-next-line no-param-reassign
+        state.currentChannelId = currentChannelId;
+
         // eslint-disable-next-line no-param-reassign
         state.status = 'idle';
         // eslint-disable-next-line no-param-reassign
@@ -40,6 +56,11 @@ const channelsSlice = createSlice({
   },
 });
 
-export const { addChannel, updateChannel, deleteChannel } = channelsSlice.actions;
+export const {
+  addChannel,
+  updateChannel,
+  deleteChannel,
+  setCurrentChannelId,
+} = channelsSlice.actions;
 export const selectors = channelsAdapter.getSelectors((state) => state.channels);
 export default channelsSlice.reducer;
