@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { Form, Button } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import api from '../routes/api.js';
+import NavBar from '../components/NavBar.jsx';
 import signUp from '../images/signUp.jpg';
 import { AuthContext } from '../contexts/AuthContext.jsx';
 
@@ -57,13 +58,7 @@ const SignUpForm = () => {
     <div className="h-100">
       <div className="h-100" id="chat">
         <div className="d-flex flex-column vh-100">
-          <nav className="shadow-sm navbar-expand-lg navbar-light bg-white">
-            <div className="container">
-              <a className="navbar-brand" href="/">
-                Chat
-              </a>
-            </div>
-          </nav>
+        <NavBar />
           <div className="container-fluid h-100">
             <div className="row justify-content-center align-content-center h-100">
               <div className="col-12 col-md-8 col-xxl-6">

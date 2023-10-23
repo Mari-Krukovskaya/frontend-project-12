@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext.jsx';
+import NavBar from '../components/NavBar.jsx';
 import api from '../routes/api';
 import entry from '../images/entry.jpg';
 
@@ -53,13 +54,7 @@ const Login = () => {
     <div className="h-100">
       <div className="h-100" id="chat">
         <div className="d-flex flex-column vh-100">
-          <nav className="shadow-sm navbar-expand-lg navbar-light bg-white">
-            <div className="container">
-              <a className="navbar-brand" href="/">
-                Hexlet
-              </a>
-            </div>
-          </nav>
+         <NavBar />
           <div className="container-fluid h-100">
             <div className="row justify-content-center align-content-center h-100">
               <div className="col-12 col-md-8 col-xxl-6">
