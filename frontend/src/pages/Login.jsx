@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext.jsx';
@@ -9,15 +10,18 @@ import NavBar from '../components/NavBar.jsx';
 import api from '../routes/api';
 import entry from '../images/entry.jpg';
 
-const validation = yup.object().shape({
-  username: yup.string().required(),
-  password: yup.string().required(),
-});
-
 const Login = () => {
+  const { t } = useTranslation();
   const { login } = useContext(AuthContext);
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
+
+  const validation = yup.object().shape({
+    username: yup.string()
+    .required(t('AuthForm.ValidForm.required')),
+    password: yup.string()
+    .required(t('AuthForm.validForm.required')),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -36,7 +40,7 @@ const Login = () => {
       } catch (error) {
         setSubmitting(false);
         if (error.response && error.response.status === 401) {
-          setAuthError('401');
+          setAuthError(t('AuthForm.ValidForm.notExist'));
         }
         setAuthError(true);
         throw error;
@@ -66,11 +70,11 @@ const Login = () => {
                         width={250}
                         height={250}
                         className="rounded-circle"
-                        alt="Войти"
+                        alt={t('AuthForm.logIn')}
                       />
                     </div>
                     <Form onSubmit={handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
-                      <h1 className="text-center mb-4">Войти</h1>
+                      <h1 className="text-center mb-4">{t('AuthForm.logIn')}</h1>
                       <Form.Group className="form-floating mb-3">
                         <Form.Control
                           type="text"
@@ -78,12 +82,12 @@ const Login = () => {
                           name="username"
                           value={values.username}
                           onChange={handleChange}
-                          placeholder="Ваш ник"
+                          placeholder={t('AuthForm.name')}
                           className="form-control"
                           isInvalid={touched.username && errors.username}
                         />
                         <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
-                        <Form.Label htmlFor="username">Ваш Ник</Form.Label>
+                        <Form.Label htmlFor="username">{t('AuthForm.name')}</Form.Label>
                       </Form.Group>
                       <Form.Group className="form-floating mb-4">
                         <Form.Control
@@ -92,23 +96,23 @@ const Login = () => {
                           name="password"
                           value={values.password}
                           onChange={handleChange}
-                          placeholder="Пароль"
+                          placeholder={t('Auth.password')}
                           className="form-control"
                           isInvalid={(touched.password && errors.password) || authError}
                         />
                         <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                         <Form.Label className="form-label" htmlFor="password">
-                          Пароль
+                         {t('AuthForm.password')}
                         </Form.Label>
                       </Form.Group>
                       <Button type="submit" className="w-100 mb-3" variant="outline-primary">
-                        Войти
+                        {t('AuthForm.buttonLogIn')}
                       </Button>
                     </Form>
                     <div className="card-footer p-4">
                       <div className="text-center">
-                        <span>Нет аккаунта?</span>
-                        <Link to="/login">Регистрация</Link>
+                        <span>{t('AuthForm.noAcc')}</span>
+                        <Link to="/login">{t('AuthForm.signUp')}</Link>
                       </div>
                     </div>
                     <div className="text-danger text-center">{authError}</div>

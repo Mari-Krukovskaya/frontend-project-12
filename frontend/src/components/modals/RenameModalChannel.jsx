@@ -7,8 +7,10 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 export const RenameModalChannel = ({ id, show, handleClose }) => {
+  const { t } = useTranslation();
   const inputRef = useRef(null);
   const wsocket = useWSocket();
 
@@ -24,10 +26,10 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
 
     const validationSchema = Yup.object({
       name: Yup.string()
-        .notOneOf(namesRenameChannels, 'Channel name must be unique')
-        .min(3, 'Channel name must be at least 3 characters')
-        .max(20, 'Channel name must not exceed 20 characters')
-        .required('Channel name is required'),
+        .notOneOf(namesRenameChannels, t('Modal.validChannel.uniq'))
+        .min(3, t('Modal.validChannel.nameMinMax'))
+        .max(20, t('Modal.validChannel.nameMinMax'))
+        .required(t('Modal.validChannel.uniq')),
     });
   
     const formik = useFormik({
@@ -61,12 +63,12 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
     return (
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Rename Channel</Modal.Title>
+          <Modal.Title>{t('Modal.renameMOdalChannel')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="name">
-              <Form.Label>New Channel Name</Form.Label>
+              <Form.Label>{t('Modal.renameModalChannel')}</Form.Label>
               <Form.Control
               className='mb-2'
                 type="text"
@@ -85,10 +87,10 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
             </Form.Group>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
-                Cancel
+                {t('Modal.buttonCancel')}
               </Button>
               <Button variant="primary" type="submit">
-                Rename
+                {t('Modal.buttonCreate')}
               </Button>
             </Modal.Footer>
           </Form>

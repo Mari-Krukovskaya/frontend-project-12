@@ -1,14 +1,16 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { useWSocket } from '../../contexts/SocketContext.jsx';
-import { selectors } from '../../slices/channelsSlice';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+import { useWSocket } from '../../contexts/SocketContext.jsx';
+import { selectors } from '../../slices/channelsSlice';
 
 export const AddModalChannel = ({ show, handleClose }) => {
+    const { t } = useTranslation();
     const inputRef = useRef(null);
     const wsocket = useWSocket();
 
@@ -21,10 +23,10 @@ export const AddModalChannel = ({ show, handleClose }) => {
 
     const validationSchema = Yup.object({
       name: Yup.string()
-        .notOneOf(namesAllChannels, 'Channel name must be unique')
-        .min(3, 'Channel name must be at least 3 characters')
-        .max(20, 'Channel name must not exceed 20 characters')
-        .required('Channel name is required'),
+        .notOneOf(namesAllChannels, t('Modal.validChannel.uniq'))
+        .min(3, t('Modal.validChannel.nameMinMax'))
+        .max(20, t('Modal.validChannel.nameMinMax'))
+        .required(t('Modal.validChannel.uniq')),
     });
   
     const formik = useFormik({
@@ -56,12 +58,12 @@ export const AddModalChannel = ({ show, handleClose }) => {
     return (
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Channel</Modal.Title>
+          <Modal.Title>{t('Modal.addModalChannel')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="name">
-              <Form.Label>Channel Name</Form.Label>
+              <Form.Label>{t('Modal.nameChannel')}</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
@@ -77,10 +79,10 @@ export const AddModalChannel = ({ show, handleClose }) => {
             </Form.Group>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
-                Cancel
+                {t('Modal.buttonCancel')}
               </Button>
               <Button variant="primary" type="submit">
-                Create
+                {t('Modal.buttonCreate')}
               </Button>
             </Modal.Footer>
           </Form>

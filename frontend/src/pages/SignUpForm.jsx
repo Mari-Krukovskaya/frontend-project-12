@@ -4,27 +4,29 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Form, Button } from 'react-bootstrap';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import api from '../routes/api.js';
 import NavBar from '../components/NavBar.jsx';
 import signUp from '../images/signUp.jpg';
 import { AuthContext } from '../contexts/AuthContext.jsx';
 
 const SignUpForm = () => {
+  const { t } =useTranslation();
   const { login } = useContext(AuthContext);
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
 
   const validation = Yup.object({
     username: Yup.string()
-      .min(3, 'не менее 3')
-      .max(20, 'не больше 20')
-      .required('Обязательное поле'),
+      .min(3, t('SignUp.ValidSignUp.usernameMinMax'))
+      .max(20, t('SignUp.ValidSignUp.usernameMinMax'))
+      .required(t('SignUp.ValidSignUp.required')),
     password: Yup.string()
-      .min(6, 'не менее 6 символов')
-      .required('Обязательное поле'),
+      .min(6, t('SignUp.ValidSignUp.passwordMin'))
+      .required(t('SignUp.ValidSignUp.required')),
     confirmPassword: Yup.string()
-      .required('Обязательное поле')
-      .oneOf([Yup.ref('password')], 'пароли должны совпадать'),
+      .required(t('SignUp.ValidSignUp.required'))
+      .oneOf([Yup.ref('password')], t('SignUp.ValidSignUp.passwordConfirm')),
   });
 
   const formik = useFormik({
@@ -46,7 +48,7 @@ const SignUpForm = () => {
         navigate('/');
       } catch (er) {
         if (er.response && er.response.status === 409) {
-          setAuthError('такой пользователь уже существует');
+          setAuthError(t('SignUp.ValidSignUp.alreadyExists'));
         }
         setSubmitting(false);
         throw er;
@@ -70,11 +72,11 @@ const SignUpForm = () => {
                         width={250}
                         height={250}
                         className="rounded-circle"
-                        alt="Регистрация"
+                        alt={t('SignUp.registration')}
                       />
                     </div>
                     <Form onSubmit={handleSubmit} className="w-50">
-                      <h1 className="text-center mb-4">Регистрация</h1>
+                      <h1 className="text-center mb-4">{t('SignUp.registration')}</h1>
                       <Form.Group className="form-floating mb-3">
                         <Form.Control
                           type="text"
@@ -82,13 +84,13 @@ const SignUpForm = () => {
                           name="username"
                           value={values.username}
                           onChange={handleChange}
-                          placeholder="От 3 до 20 символов"
+                          placeholder={t('SignUp.ValidSignUp.usernameMinMax')}
                           isInvalid={
                             (touched.username && !!errors.username) || authError
                           }
                         />
                         <Form.Label htmlFor="username">
-                          Имя пользователя
+                          {t('SignUp.username')}
                         </Form.Label>
                         <Form.Control.Feedback type="invalid">
                           {errors.username}
@@ -101,12 +103,12 @@ const SignUpForm = () => {
                           name="password"
                           value={values.password}
                           onChange={handleChange}
-                          placeholder="Не менее 6 символов"
+                          placeholder={t('SignUp.ValidSignUp.passwordMin')}
                           isInvalid={
                             (touched.password && !!errors.password) || authError
                           }
                         />
-                        <Form.Label htmlFor="password">Пароль</Form.Label>
+                        <Form.Label htmlFor="password">{t('SignUp.password')}</Form.Label>
                         <Form.Control.Feedback type="invalid">
                           {errors.password}
                         </Form.Control.Feedback>
@@ -118,12 +120,12 @@ const SignUpForm = () => {
                           name="passwordConfirm"
                           value={values.confirmPassword}
                           onChange={handleChange}
-                          placeholder="пароли должны совпадать"
+                          placeholder={t('SignUp.ValidSignUp.passwordConfirm')}
                           isInvalid={
                             (touched.passwordConfirm && !!errors.passwordConfirm) || authError
                         }
                         />
-                        <Form.Label htmlFor="passConfirm">password</Form.Label>
+                        <Form.Label htmlFor="passConfirm">{t('SignUp.confirmPassword')}</Form.Label>
                         <Form.Control.Feedback type="invalid">
                           {errors.passwordConfirm}
                         </Form.Control.Feedback>
@@ -132,7 +134,7 @@ const SignUpForm = () => {
                         type="submit"
                         className="w-100 btn btn-outline-primary"
                       >
-                        Зарегистрироваться
+                        {t('SignUp.buttonRegister')}
                       </Button>
                     </Form>
                   </div>

@@ -2,8 +2,10 @@ import { useWSocket } from '../../contexts/SocketContext';
 import { Button, Modal } from 'react-bootstrap';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 export const RemoveModalChannel = ({ id, show, handleClose }) => {
+  const { t } = useTranslation()
    const wsocket = useWSocket();
   
     const handleClick = async (id) => {
@@ -23,17 +25,17 @@ export const RemoveModalChannel = ({ id, show, handleClose }) => {
     return (
       <Modal onHide={handleClose} show={show}>
         <Modal.Header closeButton>
-          <Modal.Title>Remove Channel</Modal.Title>
+          <Modal.Title>{t('Modal.removeModalChannel')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Are you sure you want to remove the channel?</p>
+          <p>{t('Modal.areYouSure')}</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Cancel
+            {t('Modal.buttonCancel')}
           </Button>
           <Button variant="primary" onClick={handleButtonClick}>
-            Remove
+            {t('Modal.delete')}
           </Button>
         </Modal.Footer>
       </Modal>
