@@ -3,28 +3,35 @@ import React, { createContext, useState, useEffect, useMemo, useCallback } from 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
     }
   }, []);
 
-  const login = useCallback((token) => {
-    localStorage.setItem('token', token);
-    setIsAuthenticated(true);
+  const login = useCallback((user) => {
+    const responseToken = user.token;
+    const responseUsername = user.username;
+    localStorage.setItem('token', responseToken);
+    localStorage.setItem('username', responseUsername);
+    setToken(responseToken);
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
-    setIsAuthenticated(false);
+    localStorage.removeItem('username');
+    setToken('');
   }, []);
 
-  const authContextValue = useMemo(() => {
-    return { isAuthenticated, login, logout };
-  }, [isAuthenticated, login, logout]);
+  const authContextValue = useMemo(() => ({
+    token,
+    setToken,
+    login,
+    logout,
+  }), [token, setToken, login, logout]);
 
   return (
     <AuthContext.Provider value={authContextValue}>

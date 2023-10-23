@@ -32,10 +32,13 @@ const Login = () => {
         localStorage.setItem('token', token);
         login(token);
         navigate('/');
-      } catch (er) {
+      } catch (error) {
         setSubmitting(false);
+        if (error.response && error.response.status === 401) {
+          setAuthError('401');
+        }
         setAuthError(true);
-        throw er;
+        throw error;
       }
     },
   });

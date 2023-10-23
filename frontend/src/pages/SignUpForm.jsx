@@ -44,8 +44,10 @@ const SignUpForm = () => {
         login(token);
         navigate('/');
       } catch (er) {
+        if (er.response && er.response.status === 409) {
+          setAuthError('такой пользователь уже существует');
+        }
         setSubmitting(false);
-        setAuthError(true);
         throw er;
       }
     },
