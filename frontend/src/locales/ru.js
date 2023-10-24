@@ -2,8 +2,8 @@ export default {
   translation: {
     Nav: {
       chat: 'Hexlet Chat',
-        exit: 'Выйти',
-        login: 'Войти',
+      exit: 'Выйти',
+      login: 'Войти',
     },
     AuthForm: {
       logIn: 'Войти',
@@ -55,6 +55,13 @@ export default {
       messagePlaceholder: 'Введите сообщение...',
       enterMessage: 'Оправить',
     },
+    toasts: {
+      createChannel: 'Канал создан',
+      renameChanel: 'Канал переименован',
+      removeChannel: 'Канал удалён',
+      errorChannel: 'Ошибка соединения',
+    },
+
     PageNotFound: {
       notFound: 'Страница не найдена',
       clickTheLink: 'Но вы можете перейти',

@@ -16,7 +16,6 @@ const Nav = () => {
       logout();
     }
     navigate('/login');
-
   };
 
   return (

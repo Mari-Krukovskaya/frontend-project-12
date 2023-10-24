@@ -19,7 +19,7 @@ const SignUpForm = () => {
 
   const validation = Yup.object({
     username: Yup.string()
-      .min(3,`${t('SignUp.ValidSignUp.usernameMinMax')}`)
+      .min(3, `${t('SignUp.ValidSignUp.usernameMinMax')}`)
       .max(20, `${t('SignUp.ValidSignUp.usernameMinMax')}`)
       .required(`${t('SignUp.ValidSignUp.required')}`),
     password: Yup.string()
@@ -58,15 +58,7 @@ const SignUpForm = () => {
       }
     },
   });
-  const {
-     handleSubmit,
-     handleBlur,
-     values,
-     handleChange,
-     touched,
-     errors,
-
-       } = formik;
+  const { handleSubmit, handleBlur, values, handleChange, touched, errors } = formik;
   return (
     <div className="h-100">
       <div className="h-100" id="chat">

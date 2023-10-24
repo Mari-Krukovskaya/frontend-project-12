@@ -42,10 +42,10 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
           values.id = id;
           await wsocket.emitRenameChannel(values.name);
           formik.values.name = '';
-          toast.success('Channel renamed successfully');
+          toast.success(t('toasts.renameChanel'));
           handleClose();
         } catch (error) {
-          toast.error('Failed to rename channel');
+          toast.error(t('toasts.errorChannel'));
           console.error(error);
         }
       },

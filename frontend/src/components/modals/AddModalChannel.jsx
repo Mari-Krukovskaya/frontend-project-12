@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../../contexts/SocketContext.jsx';
 import { selectors } from '../../slices/channelsSlice';
+import notify from '../notify.js';
 
 export const AddModalChannel = ({ show, handleClose }) => {
     const { t } = useTranslation();
@@ -37,10 +38,10 @@ export const AddModalChannel = ({ show, handleClose }) => {
       onSubmit: async (values) => {
         try {
           await wsocket.emitAddChannel(values.name);
-          toast.success('Канал успешно создан');
+          toast.success(t('toasts.createChannel'));
           handleClose();
         } catch (error) {
-          toast.error('Не удалось создать канал');
+          toast.error(t('toasts.errorChannel'));
           console.error(error);
         }
       },

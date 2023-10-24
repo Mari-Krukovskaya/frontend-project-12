@@ -11,10 +11,10 @@ export const RemoveModalChannel = ({ id, show, handleClose }) => {
     const handleClick = async (id) => {
       try {
         await wsocket.emitRemoveChannel({ id });
-        toast.success('Channel removed successfully');
+        toast.success(t('toasts.removeChannel'));
         handleClose();
       } catch (error) {
-        toast.error('Failed to remove channel');
+        toast.error(t('toasts.errorChannel'));
         console.error(error);
       }
     };

@@ -17,7 +17,7 @@ const NotFoundPage = () => {
       <h1 className="text-muted h4">{t('PageNotFound.notFound')}</h1>
       <p className="text-muted">
         {t('PageNotFound.clickTheLink')}
-        <Link to="*">{t('PageNotFound.goToHomePage')}</Link>
+        <Link to="/">{t('PageNotFound.goToHomePage')}</Link>
       </p>
     </div>
   );
