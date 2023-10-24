@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import NavBar from '../components/NavBar';
 import { useTranslation } from 'react-i18next';
+import NavBar from '../components/NavBar';
 
 const HomePage = () => {
   const { t } = useTranslation();

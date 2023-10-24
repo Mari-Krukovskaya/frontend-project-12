@@ -1,5 +1,6 @@
 import React from 'react';
-import { I18nextProvider } from 'react-i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
+import i18n from 'i18next';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from '../pages/Login.jsx';
@@ -10,8 +11,6 @@ import WSocketProvider from '../contexts/SocketContext.jsx';
 import SignUpForm from '../pages/SignUpForm.jsx';
 import store from '../slices/store.js';
 import resources from '../locales/index.js';
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
 
 i18n.use(initReactI18next).init({
   fallbackLng: 'ru',

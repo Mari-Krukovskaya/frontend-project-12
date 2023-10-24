@@ -18,9 +18,9 @@ const Login = () => {
 
   const validation = yup.object().shape({
     username: yup.string()
-    .required(t('AuthForm.ValidForm.required')),
+      .required(t('AuthForm.ValidForm.required')),
     password: yup.string()
-    .required(t('AuthForm.validForm.required')),
+      .required(t('AuthForm.validForm.required')),
   });
 
   const formik = useFormik({

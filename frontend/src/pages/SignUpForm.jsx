@@ -11,7 +11,7 @@ import signUp from '../images/signUp.jpg';
 import { AuthContext } from '../contexts/AuthContext.jsx';
 
 const SignUpForm = () => {
-  const { t } =useTranslation();
+  const { t } = useTranslation();
   const { login } = useContext(AuthContext);
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();

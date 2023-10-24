@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
-import { useTranslation } from 'react-i18next';
 
 const NavBar = () => {
   const { t } = useTranslation();
