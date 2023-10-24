@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -6,27 +6,28 @@ import { Form, Button } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import api from '../routes/api.js';
-import NavBar from '../components/NavBar.jsx';
+import Nav from '../components/NavBar.jsx';
 import signUp from '../images/signUp.jpg';
 import { AuthContext } from '../contexts/AuthContext.jsx';
 
 const SignUpForm = () => {
   const { t } = useTranslation();
+  const refInput = useRef(null);
   const { login } = useContext(AuthContext);
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
 
   const validation = Yup.object({
     username: Yup.string()
-      .min(3, t('SignUp.ValidSignUp.usernameMinMax'))
-      .max(20, t('SignUp.ValidSignUp.usernameMinMax'))
-      .required(t('SignUp.ValidSignUp.required')),
+      .min(3,`${t('SignUp.ValidSignUp.usernameMinMax')}`)
+      .max(20, `${t('SignUp.ValidSignUp.usernameMinMax')}`)
+      .required(`${t('SignUp.ValidSignUp.required')}`),
     password: Yup.string()
-      .min(6, t('SignUp.ValidSignUp.passwordMin'))
-      .required(t('SignUp.ValidSignUp.required')),
+      .min(6, `${t('SignUp.ValidSignUp.passwordMin')}`)
+      .required(`${t('SignUp.ValidSignUp.required')}`),
     confirmPassword: Yup.string()
-      .required(t('SignUp.ValidSignUp.required'))
-      .oneOf([Yup.ref('password')], t('SignUp.ValidSignUp.passwordConfirm')),
+      .required(`${t('SignUp.ValidSignUp.required')}`)
+      .oneOf([Yup.ref('password')], `${t('SignUp.ValidSignUp.passwordConfirm')}`),
   });
 
   const formik = useFormik({
@@ -36,6 +37,8 @@ const SignUpForm = () => {
       passwordConfirm: '',
     },
     validationShema: validation,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: async (values, { setSubmitting }) => {
       setAuthError(false);
       try {
@@ -48,19 +51,27 @@ const SignUpForm = () => {
         navigate('/');
       } catch (er) {
         if (er.response && er.response.status === 409) {
-          setAuthError(t('SignUp.ValidSignUp.alreadyExists'));
+          setAuthError(`${t('SignUp.ValidSignUp.alreadyExists')}`);
         }
         setSubmitting(false);
         throw er;
       }
     },
   });
-  const { handleSubmit, values, handleChange, touched, errors } = formik;
+  const {
+     handleSubmit,
+     handleBlur,
+     values,
+     handleChange,
+     touched,
+     errors,
+
+       } = formik;
   return (
     <div className="h-100">
       <div className="h-100" id="chat">
         <div className="d-flex flex-column vh-100">
-        <NavBar />
+          <Nav />
           <div className="container-fluid h-100">
             <div className="row justify-content-center align-content-center h-100">
               <div className="col-12 col-md-8 col-xxl-6">
@@ -76,14 +87,19 @@ const SignUpForm = () => {
                       />
                     </div>
                     <Form onSubmit={handleSubmit} className="w-50">
-                      <h1 className="text-center mb-4">{t('SignUp.registration')}</h1>
+                      <h1 className="text-center mb-4">
+                        {t('SignUp.registration')}
+                      </h1>
                       <Form.Group className="form-floating mb-3">
                         <Form.Control
                           type="text"
                           id="username"
                           name="username"
+                          required
                           value={values.username}
                           onChange={handleChange}
+                          onBlur={handleBlur}
+                          ref={refInput}
                           placeholder={t('SignUp.ValidSignUp.usernameMinMax')}
                           isInvalid={
                             (touched.username && !!errors.username) || authError
@@ -108,7 +124,9 @@ const SignUpForm = () => {
                             (touched.password && !!errors.password) || authError
                           }
                         />
-                        <Form.Label htmlFor="password">{t('SignUp.password')}</Form.Label>
+                        <Form.Label htmlFor="password">
+                          {t('SignUp.password')}
+                        </Form.Label>
                         <Form.Control.Feedback type="invalid">
                           {errors.password}
                         </Form.Control.Feedback>
@@ -123,9 +141,11 @@ const SignUpForm = () => {
                           placeholder={t('SignUp.ValidSignUp.passwordConfirm')}
                           isInvalid={
                             (touched.passwordConfirm && !!errors.passwordConfirm) || authError
-                        }
+                          }
                         />
-                        <Form.Label htmlFor="passConfirm">{t('SignUp.confirmPassword')}</Form.Label>
+                        <Form.Label htmlFor="passConfirm">
+                          {t('SignUp.confirmPassword')}
+                        </Form.Label>
                         <Form.Control.Feedback type="invalid">
                           {errors.passwordConfirm}
                         </Form.Control.Feedback>

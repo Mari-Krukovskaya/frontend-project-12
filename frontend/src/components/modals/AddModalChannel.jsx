@@ -23,10 +23,10 @@ export const AddModalChannel = ({ show, handleClose }) => {
 
     const validationSchema = Yup.object({
       name: Yup.string()
-        .notOneOf(namesAllChannels, t('Modal.validChannel.uniq'))
-        .min(3, t('Modal.validChannel.nameMinMax'))
-        .max(20, t('Modal.validChannel.nameMinMax'))
-        .required(t('Modal.validChannel.uniq')),
+        .notOneOf(namesAllChannels, `${t('Modal.validChannel.uniq')}`)
+        .min(3, `${t('Modal.validChannel.nameMinMax')}`)
+        .max(20, `${t('Modal.validChannel.nameMinMax')}`)
+        .required(`${t('Modal.validChannel.uniq')}`),
     });
   
     const formik = useFormik({

@@ -1,23 +1,32 @@
-import React, { createContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState();
-
-  useEffect(() => {
+  const [username, setUsername] = useEffect(() => {
     const storedToken = localStorage.getItem('token');
+    const storedUsername = localStorage.getItem('username');
     if (storedToken) {
       setToken(storedToken);
+    }
+    if (storedUsername) {
+      setUsername(storedUsername);
     }
   }, []);
 
   const login = useCallback((user) => {
-    const responseToken = user.token;
-    const responseUsername = user.username;
+    const { token: responseToken, username: responseUsername } = user;
     localStorage.setItem('token', responseToken);
     localStorage.setItem('username', responseUsername);
     setToken(responseToken);
+    setUsername(responseUsername);
   }, []);
 
   const logout = useCallback(() => {
@@ -26,12 +35,15 @@ export const AuthProvider = ({ children }) => {
     setToken('');
   }, []);
 
-  const authContextValue = useMemo(() => ({
-    token,
-    setToken,
-    login,
-    logout,
-  }), [token, setToken, login, logout]);
+  const authContextValue = useMemo(
+    () => ({
+      token,
+      username,
+      login,
+      logout,
+    }),
+    [token, username, login, logout]
+  );
 
   return (
     <AuthContext.Provider value={authContextValue}>

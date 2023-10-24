@@ -2,16 +2,15 @@ export default {
   translation: {
     Nav: {
       chat: 'Hexlet Chat',
-      buttonExit: {
         exit: 'Выйти',
-      },
+        login: 'Войти',
     },
     AuthForm: {
       logIn: 'Войти',
       name: 'Ваш ник',
       password: 'Пароль',
       buttonLogIn: 'Войти',
-      noAcc: 'Нет аккаунта',
+      noAcc: 'Нет аккаунта?',
       signUp: 'Регистрация',
       ValidForm: {
         notExist: 'Неверные имя пользователя или пароль',

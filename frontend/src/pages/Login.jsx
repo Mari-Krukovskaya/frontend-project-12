@@ -3,10 +3,10 @@ import { Button, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import * as yup from 'yup';
+import * as Yup from 'yup';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext.jsx';
-import NavBar from '../components/NavBar.jsx';
+import Nav from '../components/NavBar.jsx';
 import api from '../routes/api';
 import entry from '../images/entry.jpg';
 
@@ -16,17 +16,15 @@ const Login = () => {
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
 
-  const validation = yup.object().shape({
-    username: yup.string()
-      .required(t('AuthForm.ValidForm.required')),
-    password: yup.string()
-      .required(t('AuthForm.validForm.required')),
+  const validation = Yup.object().shape({
+    username: Yup.string().required(`${t('AuthForm.ValidForm.required')}`),
+    password: Yup.string().required(`${t('AuthForm.ValidForm.required')}`),
   });
 
   const formik = useFormik({
     initialValues: {
       username: '',
-      password: '',
+      password: null,
     },
     validationSchema: validation,
     onSubmit: async (values, { setSubmitting }) => {
@@ -40,25 +38,19 @@ const Login = () => {
       } catch (error) {
         setSubmitting(false);
         if (error.response && error.response.status === 401) {
-          setAuthError(t('AuthForm.ValidForm.notExist'));
+          setAuthError(`${t('AuthForm.ValidForm.notExist')}`);
         }
         setAuthError(true);
         throw error;
       }
     },
   });
-  const {
-    handleSubmit,
-    handleChange,
-    values,
-    touched,
-    errors,
-  } = formik;
+  const { handleSubmit, handleChange, values, touched, errors } = formik;
   return (
     <div className="h-100">
       <div className="h-100" id="chat">
         <div className="d-flex flex-column vh-100">
-         <NavBar />
+          <Nav />
           <div className="container-fluid h-100">
             <div className="row justify-content-center align-content-center h-100">
               <div className="col-12 col-md-8 col-xxl-6">
@@ -73,8 +65,14 @@ const Login = () => {
                         alt={t('AuthForm.logIn')}
                       />
                     </div>
-                    <Form onSubmit={handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
-                      <h1 className="text-center mb-4">{t('AuthForm.logIn')}</h1>
+                    <Form
+                      onSubmit={handleSubmit}
+                      className="col-12 col-md-6 mt-3 mt-mb-0"
+                      noValidate
+                    >
+                      <h1 className="text-center mb-4">
+                        {t('AuthForm.logIn')}
+                      </h1>
                       <Form.Group className="form-floating mb-3">
                         <Form.Control
                           type="text"
@@ -86,8 +84,12 @@ const Login = () => {
                           className="form-control"
                           isInvalid={touched.username && errors.username}
                         />
-                        <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
-                        <Form.Label htmlFor="username">{t('AuthForm.name')}</Form.Label>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.username}
+                        </Form.Control.Feedback>
+                        <Form.Label htmlFor="username">
+                          {t('AuthForm.name')}
+                        </Form.Label>
                       </Form.Group>
                       <Form.Group className="form-floating mb-4">
                         <Form.Control
@@ -98,14 +100,22 @@ const Login = () => {
                           onChange={handleChange}
                           placeholder={t('Auth.password')}
                           className="form-control"
-                          isInvalid={(touched.password && errors.password) || authError}
+                          isInvalid={
+                            (touched.password && errors.password) || authError
+                          }
                         />
-                        <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.password}
+                        </Form.Control.Feedback>
                         <Form.Label className="form-label" htmlFor="password">
-                         {t('AuthForm.password')}
+                          {t('AuthForm.password')}
                         </Form.Label>
                       </Form.Group>
-                      <Button type="submit" className="w-100 mb-3" variant="outline-primary">
+                      <Button
+                        type="submit"
+                        className="w-100 mb-3"
+                        variant="outline-primary"
+                      >
                         {t('AuthForm.buttonLogIn')}
                       </Button>
                     </Form>
