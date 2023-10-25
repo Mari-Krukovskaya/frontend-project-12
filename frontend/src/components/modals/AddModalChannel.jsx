@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
+import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -31,6 +32,9 @@ export const AddModalChannel = ({ show, handleClose }) => {
       },
       validationSchema: validationSchema,
       onSubmit: async (values) => {
+        const { name } = values;
+        formik.setSubmitting(true);
+        const filterName = filter.clean()
         try {
           await wsocket.emitAddChannel(values.name);
           handleClose();

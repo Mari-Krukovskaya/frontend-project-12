@@ -2,6 +2,7 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import i18n from 'i18next';
+import filter from 'leo-profanity';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from '../pages/Login.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
@@ -20,6 +21,10 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
 });
+
+filter.add(filter.getDictionary('en'));
+filter.add(filter.getDictionary('fr'));
+filter.add(filter.getDictionary('ru'));
 
 const App = () => {
   return (
