@@ -34,9 +34,9 @@ export const AddModalChannel = ({ show, handleClose }) => {
       onSubmit: async (values) => {
         const { name } = values;
         formik.setSubmitting(true);
-        const filterName = filter.clean()
+        const filterName = filter.clean(name)
         try {
-          await wsocket.emitAddChannel(values.name);
+          await wsocket.emitAddChannel({name: filterName, username});
           handleClose();
           toast.success(t('toasts.createChannel'));
         } catch (error) {

@@ -37,15 +37,16 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
         name: channelForRename ? channelForRename.name : '',
       },
       validationSchema: validationSchema,
-      onSubmit: async (values) => {
+      onSubmit: async ({name}) => {
+        formik.setSubmitting(true);
+        const newChannel = filter.clean(name)
         try {
-          values.id = id;
-          await wsocket.emitRenameChannel(values.name);
-          formik.values.name = '';
-          toast.success(t('toasts.renameChanel'));
+          await wsocket.emitRenameChannel({ channelId: id, name: newChannel });
           handleClose();
+          toast.success(t('toasts.renameChanel'));
         } catch (error) {
           toast.error(t('toasts.errorChannel'));
+          formik.setSubmitting(false);
           console.error(error);
         }
       },
