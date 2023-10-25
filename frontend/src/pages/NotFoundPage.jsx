@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import notFound404 from '../images/notFound404.jpg';
+import api from '../routes/api';
 
 const NotFoundPage = () => {
   const { t } = useTranslation();
@@ -11,13 +12,13 @@ const NotFoundPage = () => {
         src={notFound404}
         width={250}
         height={250}
-        alt={t('PageNotFound.notFound')}
+        alt={t('pageNotFound.notFound')}
         className="img-fluid h-20"
       />
-      <h1 className="text-muted h4">{t('PageNotFound.notFound')}</h1>
+      <h1 className="text-muted h4">{t('pageNotFound.notFound')}</h1>
       <p className="text-muted">
-        {t('PageNotFound.clickTheLink')}
-        <Link to="/">{t('PageNotFound.goToHomePage')}</Link>
+        {t('pageNotFound.clickTheLink')}
+        <Link to={api.error()}>{t('pageNotFound.goToHomePage')}</Link>
       </p>
     </div>
   );

@@ -1,29 +1,29 @@
 export default {
   translation: {
-    Nav: {
+    nav: {
       chat: 'Hexlet Chat',
       exit: 'Выйти',
       login: 'Войти',
     },
-    AuthForm: {
+    authForm: {
       logIn: 'Войти',
       name: 'Ваш ник',
       password: 'Пароль',
       buttonLogIn: 'Войти',
       noAcc: 'Нет аккаунта?',
       signUp: 'Регистрация',
-      ValidForm: {
+      validForm: {
         notExist: 'Неверные имя пользователя или пароль',
         required: 'Заполните это поле',
       },
     },
-    SignUp: {
+    signUp: {
       registration: 'Регистрация',
       username: 'Имя Пользователя',
       password: 'Пароль',
       confirmPassword: 'Подвердить пароль',
       buttonRegister: 'Зарегистрироваться',
-      ValidSignUp: {
+      validSignUp: {
         required: 'Заполните это поле',
         usernameMinMax: 'От 3 до 20 символов',
         passwordMin: 'Не менее 6 символов',
@@ -31,7 +31,7 @@ export default {
         alreadyExists: 'Такой пользователь уже существует',
       },
     },
-    Modal: {
+    modal: {
       addModalChannel: 'Добавить канал',
       removeModalChannel: 'Удалить канал',
       renameModalChannel: 'Переименовать канал',
@@ -62,7 +62,7 @@ export default {
       errorChannel: 'Ошибка соединения',
     },
 
-    PageNotFound: {
+    pageNotFound: {
       notFound: 'Страница не найдена',
       clickTheLink: 'Но вы можете перейти',
       goToHomePage: 'На главную страницу',

@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';

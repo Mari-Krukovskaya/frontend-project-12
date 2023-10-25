@@ -1,10 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../../contexts/SocketContext.jsx';
 import { selectors } from '../../slices/channelsSlice';
@@ -18,16 +17,12 @@ export const AddModalChannel = ({ show, handleClose }) => {
     const channels = useSelector(selectors.selectAll);
     const namesAllChannels = channels.map((channel) => channel.name);
 
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
-
     const validationSchema = Yup.object({
       name: Yup.string()
-        .notOneOf(namesAllChannels, `${t('Modal.validChannel.uniq')}`)
-        .min(3, `${t('Modal.validChannel.nameMinMax')}`)
-        .max(20, `${t('Modal.validChannel.nameMinMax')}`)
-        .required(`${t('Modal.validChannel.uniq')}`),
+        .notOneOf(namesAllChannels, t('modal.validChannel.uniq'))
+        .min(3, t('modal.validChannel.nameMinMax'))
+        .max(20, t('modal.validChannel.nameMinMax'))
+        .required(t('modal.validChannel.uniq')),
     });
   
     const formik = useFormik({
@@ -38,8 +33,8 @@ export const AddModalChannel = ({ show, handleClose }) => {
       onSubmit: async (values) => {
         try {
           await wsocket.emitAddChannel(values.name);
-          toast.success(t('toasts.createChannel'));
           handleClose();
+          toast.success(t('toasts.createChannel'));
         } catch (error) {
           toast.error(t('toasts.errorChannel'));
           console.error(error);
@@ -59,31 +54,38 @@ export const AddModalChannel = ({ show, handleClose }) => {
     return (
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{t('Modal.addModalChannel')}</Modal.Title>
+          <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="name">
-              <Form.Label>{t('Modal.nameChannel')}</Form.Label>
+              <Form.Label>{t('modal.nameChannel')}</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
+                required
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.name}
                 ref={inputRef}
                 isInvalid={touched.name && errors.name}
+                autoFocus
               />
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback type="invalid" >
                 {errors.name}
               </Form.Control.Feedback>
             </Form.Group>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
-                {t('Modal.buttonCancel')}
+                {t('modal.buttonCancel')}
               </Button>
-              <Button variant="primary" type="submit">
-                {t('Modal.buttonCreate')}
+              <Button 
+              variant="primary" 
+              type="submit"
+              disabled={Object.keys(errors).length > 0}
+              >
+              
+                {t('modal.buttonCreate')}
               </Button>
             </Modal.Footer>
           </Form>

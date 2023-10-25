@@ -26,10 +26,10 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
 
     const validationSchema = Yup.object({
       name: Yup.string()
-        .notOneOf(namesRenameChannels, `${t('Modal.validChannel.uniq')}`)
-        .min(3, `${t('Modal.validChannel.nameMinMax')}`)
-        .max(20, `${t('Modal.validChannel.nameMinMax')}`)
-        .required(`${t('Modal.validChannel.uniq')}`),
+        .notOneOf(namesRenameChannels, t('modal.validChannel.uniq'))
+        .min(3, t('modal.validChannel.nameMinMax'))
+        .max(20, t('modal.validChannel.nameMinMax'))
+        .required(t('modal.validChannel.uniq')),
     });
   
     const formik = useFormik({
@@ -63,12 +63,12 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
     return (
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{t('Modal.renameMOdalChannel')}</Modal.Title>
+          <Modal.Title>{t('modal.renameMOdalChannel')}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="name">
-              <Form.Label>{t('Modal.renameModalChannel')}</Form.Label>
+            <Form.Group>
+              <Form.Label>{t('modal.renameModalChannel')}</Form.Label>
               <Form.Control
               className='mb-2'
                 type="text"
@@ -82,15 +82,15 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
                 isInvalid={touched.name && errors.name}
               />
               <Form.Control.Feedback type="invalid">
-                {errors.name}
+                {errors.name && touched.name ? errors.name : null}
               </Form.Control.Feedback>
             </Form.Group>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
-                {t('Modal.buttonCancel')}
+                {t('modal.buttonCancel')}
               </Button>
               <Button variant="primary" type="submit">
-                {t('Modal.buttonCreate')}
+                {t('modal.buttonCreate')}
               </Button>
             </Modal.Footer>
           </Form>

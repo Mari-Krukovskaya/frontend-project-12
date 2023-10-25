@@ -3,19 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { Button, Navbar, Container } from 'react-bootstrap';
 import { Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import api from '../routes/api';
 
 const Nav = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const { token, logout } = useContext(AuthContext);
-  const btnClick = token ? `${t('Nav.exit')}` : `${t('Nav.login')}`;
+  const auth = useContext(AuthContext);
 
   const handleBtnClick = () => {
-    if (token) {
-      logout();
-    }
-    navigate('/login');
+    auth.logout();
+    navigate(api.login());
   };
 
   return (
@@ -24,13 +22,18 @@ const Nav = () => {
         <Container>
           <Navbar.Brand
             as={Link}
-            to="/"
+            to={api.home()}
             state={{ from: location }}
             className="navbar-brand"
           >
-            {t('Nav.chat')}
+            {t('nav.chat')}
           </Navbar.Brand>
-          <Button onClick={handleBtnClick} variant="primary">{btnClick}</Button>
+          <Navbar.Collapse className="justify-content-end" />
+        {auth.loggedIn ? (
+          <Button onClick={handleBtnClick}>{t('nav.exit')}</Button>
+        ) : (
+          <Button onClick={() => navigate(api.login())}>{t('nav.login')}</Button>
+        )}
         </Container>
       </Navbar>
       <Outlet />

@@ -1,43 +1,32 @@
-import React, { createContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useState, useMemo } from 'react';
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState();
-  const [username, setUsername] = useState();
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUsername = localStorage.getItem('username');
-    if (storedToken) {
-      setToken(storedToken);
-    }
-    if (storedUsername) {
-      setUsername(storedUsername);
-    }
-  }, []);
-
-  const login = (user) => {
-    const { token: responseToken, username: responseUsername } = user;
-    localStorage.setItem('token', responseToken);
-    localStorage.setItem('username', responseUsername);
-    setToken(responseToken);
-    setUsername(responseUsername);
+  const login = ({ data }) => {
+    localStorage.setItem('username', JSON.stringify(data));
+    setLoggedIn(true);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
     localStorage.removeItem('username');
-    setToken('');
-    setUsername('');
+    setLoggedIn(false);
   };
-
-  const authContextValue = useMemo(() => ({
-    token,
-    username,
-    login,
-    logout,
-  }), [token, username]);
+  const getUserName = () => {
+    const userId = JSON.parse(localStorage.getItem('username'));
+    return userId?.username;
+  };
+  const authContextValue = useMemo(
+    () => ({
+      loggedIn,
+      logout,
+      login,
+      getUserName,
+    }),
+    [loggedIn],
+  );
 
   return (
     <AuthContext.Provider value={authContextValue}>
