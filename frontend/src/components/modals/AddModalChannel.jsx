@@ -52,6 +52,8 @@ export const AddModalChannel = ({ show, handleClose }) => {
 } = formik;
 
     return (
+      <>
+      <button onClick={handleClose} className="btn btn-primary" type="button">{t('modal.buttonAdd')}</button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
@@ -91,5 +93,6 @@ export const AddModalChannel = ({ show, handleClose }) => {
           </Form>
         </Modal.Body>
       </Modal>
+      </>
     );
   };

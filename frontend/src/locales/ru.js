@@ -32,6 +32,7 @@ export default {
       },
     },
     modal: {
+      buttonAdd: '+',
       addModalChannel: 'Добавить канал',
       removeModalChannel: 'Удалить канал',
       renameModalChannel: 'Переименовать канал',
