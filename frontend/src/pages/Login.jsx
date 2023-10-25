@@ -13,6 +13,7 @@ import Nav from '../components/NavBar.jsx';
 const Login = () => {
   const { t } = useTranslation();
   const { login } = useContext(AuthContext);
+  console.log(login, 'login')
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
 
