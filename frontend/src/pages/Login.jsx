@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -12,12 +12,9 @@ import Nav from '../components/NavBar.jsx';
 
 const Login = () => {
   const { t } = useTranslation();
-  const inputRef = useRef(null);
   const { login } = useContext(AuthContext);
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => inputRef.current.focus(), []);
 
   const validation = Yup.object().shape({
     username: Yup.string().required(t('authForm.validForm.required')),
