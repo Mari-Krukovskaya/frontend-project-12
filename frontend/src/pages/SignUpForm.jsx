@@ -1,8 +1,8 @@
 import React, { useContext, useState, useRef } from 'react';
 import axios from 'axios';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Card } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import api from '../routes/api.js';
@@ -57,15 +57,14 @@ const SignUpForm = () => {
   });
   const { handleSubmit, handleBlur, values, handleChange, touched, errors } = formik;
   return (
-    <>
       <div className="h-100 d-flex flex-column">
         <Nav />
         <div className="container-fluid h-100">
           <div className="row justify-content-center align-content-center h-100">
             <div className="col-12 col-md-8 col-xxl-6">
-              <div className="card shadow-sm">
-                <div className="card-body row p-5">
-                  <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
+              <Card className="card shadow-sm">
+                <Card.Body className="card-body row p-5">
+                  <div>
                     <img
                       src={signUp}
                       width={250}
@@ -78,7 +77,7 @@ const SignUpForm = () => {
                     <h1 className="text-center mb-4">
                       {t('signUp.registration')}
                     </h1>
-                    <Form.Group className="form-floating mb-3">
+                    <Form.Floating className="form-floating mb-3">
                       <Form.Control
                         type="text"
                         id="username"
@@ -99,8 +98,8 @@ const SignUpForm = () => {
                       <Form.Control.Feedback type="invalid" tooltip>
                         {errors.username}
                       </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="form-floating mb-3">
+                    </Form.Floating>
+                    <Form.Floating className="form-floating mb-3">
                       <Form.Control
                         type="password"
                         id="password"
@@ -118,8 +117,8 @@ const SignUpForm = () => {
                       <Form.Control.Feedback type="invalid" tooltip>
                         {errors.password}
                       </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group className="form-floating mb-3">
+                    </Form.Floating>
+                    <Form.Floating className="form-floating mb-3">
                       <Form.Control
                         type="password"
                         id="passwordConfirm"
@@ -139,7 +138,7 @@ const SignUpForm = () => {
                           ? errors.passwordConfirm
                           : t('signUp.validSignUp.passwordConfirm')}
                       </Form.Control.Feedback>
-                    </Form.Group>
+                    </Form.Floating>
                     <Button
                       type="submit"
                       className="w-100 btn btn-outline-primary"
@@ -147,14 +146,12 @@ const SignUpForm = () => {
                       {t('signUp.buttonRegister')}
                     </Button>
                   </Form>
-                </div>
-              </div>
+                </Card.Body>
+              </Card>
             </div>
           </div>
         </div>
       </div>
-      <Outlet />
-    </>
   );
 };
 

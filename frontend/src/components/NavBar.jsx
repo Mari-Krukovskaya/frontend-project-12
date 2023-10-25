@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Navbar, Container } from 'react-bootstrap';
-import { useLocation, useNavigate, Link, Outlet } from 'react-router-dom';
+import { useNavigate, Link, Outlet } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import api from '../routes/api';
 
 const Nav = () => {
   const { t } = useTranslation();
-  const location = useLocation();
+  // const location = useLocation();
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
@@ -22,8 +22,8 @@ const Nav = () => {
         <Container>
           <Navbar.Brand
             as={Link}
-            to={api.home()}
-            state={{ from: location }}
+            to={api.login()}
+            // state={{ from: location }}
             className="navbar-brand"
           >
             {t('nav.chat')}
