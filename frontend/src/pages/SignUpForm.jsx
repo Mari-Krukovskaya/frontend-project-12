@@ -137,7 +137,7 @@ const SignUpForm = () => {
                       <Form.Control.Feedback type="invalid" tooltip>
                         {authError === false
                           ? errors.passwordConfirm
-                          : t('signUp.validSignUp.alreadyExists')}
+                          : t('signUp.validSignUp.passwordConfirm')}
                       </Form.Control.Feedback>
                     </Form.Group>
                     <Button

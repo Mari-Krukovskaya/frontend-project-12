@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
@@ -43,10 +43,9 @@ const Login = () => {
       }
     },
   });
-  const { handleSubmit, handleChange, values, touched, errors } = formik;
+  const { handleSubmit, handleChange, values, errors } = formik;
   return (
-    <>
-      <div className="h-100 d-flex fkex-column">
+      <div className="h-100 d-flex flex-column">
         <Nav />
         <div className="container-fluid h-100">
           <div className="row justify-content-center align-content-center h-100">
@@ -70,6 +69,7 @@ const Login = () => {
                     <Form.Group className="form-floating mb-3">
                       <Form.Control
                         autoFocus
+                        autoComplete="username"
                         type="text"
                         id="username"
                         name="username"
@@ -77,7 +77,8 @@ const Login = () => {
                         onChange={handleChange}
                         placeholder={t('authForm.name')}
                         className="form-control"
-                        isInvalid={touched.username && errors.username}
+                        isInvalid={authError}
+                        // isInvalid={touched.username && errors.username}
                       />
                       <Form.Control.Feedback type="invalid" tooltip>
                         {t('authForm.required')}
@@ -91,14 +92,16 @@ const Login = () => {
                         type="password"
                         id="password"
                         name="password"
+                        autoComplete="current-password"
                         autoFocus
                         value={values.password}
                         onChange={handleChange}
                         placeholder={t('auth.password')}
                         className="form-control"
-                        isInvalid={
-                          (touched.password && errors.password) || authError
-                        }
+                        isInvalid={authError}
+                        // isInvalid={
+                        //   (touched.password && errors.password) || authError
+                        // }
                       />
                       <Form.Control.Feedback type="invalid" tooltip>
                         {errors.password ?? t('authForm.required')}
@@ -127,8 +130,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Outlet />
-    </>
   );
 };
 
