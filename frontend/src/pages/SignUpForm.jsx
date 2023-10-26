@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../routes/api.js';
 import signUp from '../images/signUp.jpg';
 import { AuthContext } from '../contexts/AuthContext.jsx';
-import Nav from '../components/NavBar.jsx';
+// import Nav from '../components/NavBar.jsx';
 
 const SignUpForm = () => {
   const { t } = useTranslation();
@@ -57,8 +57,8 @@ const SignUpForm = () => {
   });
   const { handleSubmit, handleBlur, values, handleChange, touched, errors } = formik;
   return (
-      <div className="h-100 d-flex flex-column">
-        <Nav />
+  // <div className="h-100 d-flex flex-column">
+  // <Nav />
         <div className="container-fluid h-100">
           <div className="row justify-content-center align-content-center h-100">
             <div className="col-12 col-md-8 col-xxl-6">
@@ -151,7 +151,7 @@ const SignUpForm = () => {
             </div>
           </div>
         </div>
-      </div>
+  // </div>
   );
 };
 

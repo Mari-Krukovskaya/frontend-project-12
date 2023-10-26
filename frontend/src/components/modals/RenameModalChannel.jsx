@@ -4,6 +4,7 @@ import { useWSocket } from '../../contexts/SocketContext';
 import { selectors } from '../../slices/channelsSlice';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
+import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
