@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useWSocket } from '../../contexts/SocketContext';
-import { selectors } from '../../slices/channelsSlice';
+import { selectors } from '../../slices/channelsSlice.js';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import filter from 'leo-profanity';
@@ -16,7 +16,7 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
   const wsocket = useWSocket();
 
   const channels = useSelector(selectors.selectAll);
-  const channelForRename = channels.filter((channel) => channel.id === id);
+  const channelForRenameId = channels.filter((channel) => channel.id === id);
   const namesRenameChannels = channels.map((channel) => channel.name);
   
     useEffect(() => {
@@ -35,14 +35,14 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
   
     const formik = useFormik({
       initialValues: {
-        name: channelForRename ? channelForRename.name : '',
+        name: namesRenameChannels,
       },
       validationSchema: validationSchema,
       onSubmit: async ({name}) => {
         formik.setSubmitting(true);
         const newChannel = filter.clean(name)
         try {
-          await wsocket.emitRenameChannel({ channelId: id, name: newChannel });
+          await wsocket.emitRenameChannel({ channelId: channelForRenameId, name: newChannel });
           handleClose();
           toast.success(t('toasts.renameChanel'));
         } catch (error) {

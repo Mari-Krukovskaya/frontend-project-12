@@ -2,16 +2,21 @@ import { useWSocket } from '../../contexts/SocketContext';
 import { Button, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { setCurrentChannelId } from '../../slices/channelsSlice.js';
 
 export const RemoveModalChannel = ({ id, show, handleClose }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
    const wsocket = useWSocket();
-  
+   const dispatch = useDispatch();
+   const defaultChannel = 1;
+
     const handleClick = async (id) => {
       try {
         await wsocket.emitRemoveChannel({ id });
         toast.success(t('toasts.removeChannel'));
-        handleClose();
+        dispatch(handleClose());
+        dispatch(setCurrentChannelId(defaultChannel))
       } catch (error) {
         toast.error(t('toasts.errorChannel'));
         console.error(error);

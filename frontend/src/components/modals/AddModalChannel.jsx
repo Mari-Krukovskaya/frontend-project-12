@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import filter from 'leo-profanity';
@@ -7,13 +7,13 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../../contexts/SocketContext.jsx';
-import { selectors } from '../../slices/channelsSlice';
-import notify from '../notify.js';
+import { selectors, setCurrentChannelId } from '../../slices/channelsSlice.js';
 
 export const AddModalChannel = ({ show, handleClose }) => {
     const { t } = useTranslation();
     const inputRef = useRef(null);
     const wsocket = useWSocket();
+    const dispatch = useDispatch();
 
     const channels = useSelector(selectors.selectAll);
     const namesAllChannels = channels.map((channel) => channel.name);
@@ -36,7 +36,9 @@ export const AddModalChannel = ({ show, handleClose }) => {
         formik.setSubmitting(true);
         const filterName = filter.clean(name)
         try {
-          await wsocket.emitAddChannel({name: filterName, username});
+         const data = await wsocket.emitAddChannel(filterName);
+          await dispatch(setCurrentChannelId(data))
+          name.trim()
           handleClose();
           toast.success(t('toasts.createChannel'));
         } catch (error) {

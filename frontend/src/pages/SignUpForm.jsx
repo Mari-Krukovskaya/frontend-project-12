@@ -56,6 +56,7 @@ const SignUpForm = () => {
     },
   });
   const { handleSubmit, handleBlur, values, handleChange, touched, errors } = formik;
+
   return (
   //   <Nav />
         <div className="container-fluid h-100">
