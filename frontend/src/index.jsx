@@ -7,7 +7,7 @@ import './index.css';
 import App from './components/App.jsx';
 import store from './slices/store.js';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('chat'));
 root.render(
   <Provider store={store}>
     <React.StrictMode>

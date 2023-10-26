@@ -6,7 +6,8 @@ import filter from 'leo-profanity';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from '../pages/Login.jsx';
 import NotFoundPage from '../pages/NotFoundPage.jsx';
-import HomePage from '../pages/HomePage.jsx';
+// import HomePage from '../pages/HomePage.jsx';
+import Nav from './NavBar.jsx';
 import { AuthProvider } from '../contexts/AuthContext.jsx';
 import WSocketProvider from '../contexts/SocketContext.jsx';
 import SignUpForm from '../pages/SignUpForm.jsx';
@@ -33,7 +34,7 @@ const App = () => {
         <I18nextProvider i18n={i18n}>
           <BrowserRouter>
             <Routes>
-              <Route path={api.home()} element={<HomePage />} />
+              <Route path={api.home()} element={<Nav />} />
               <Route path={api.login()} element={<Login />} />
               <Route path={api.signUp()} element={<SignUpForm />} />
               <Route path={api.error()} element={<NotFoundPage />} />
