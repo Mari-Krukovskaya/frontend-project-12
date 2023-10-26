@@ -12,6 +12,8 @@
   "author": "Maria Krukovskaya",
   "license": "ISC",
   "dependencies": {
-    "@hexlet/chat-server": "^1.1.8"
+    "@hexlet/chat-server": "^1.1.8",
+    "@rollbar/react": "^0.11.2",
+    "rollbar": "^2.26.2"
   }
 }

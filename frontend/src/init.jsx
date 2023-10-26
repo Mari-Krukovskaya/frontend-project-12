@@ -1,9 +1,10 @@
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
+import { Provider } from 'react-redux';
 import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import filter from 'leo-profanity';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider as ProviderRoll, ErrorBoundary } from '@rollbar/react';
 import { addMessage } from './slices/messagesSlice.js';
 import {
   addChannel,
@@ -17,7 +18,6 @@ import resources from './locales/index.js';
 import WSocketProvider from './contexts/SocketContext.jsx';
 
 const init = async (socket) => {
-  const dispatch = useDispatch();
   const i18n = i18next.createInstance();
 
   await i18n.use(initReactI18next).init({
@@ -33,30 +33,38 @@ const init = async (socket) => {
   filter.add(filter.getDictionary('fr'));
   filter.add(filter.getDictionary('ru'));
 
-  socket.on('newMessage', (payload) => dispatch(addMessage(payload)));
-  socket.on('newchannel', (payload) => dispatch(addChannel(payload)));
-  socket.on('removeChannel', (payload) => dispatch(deleteChannel(payload.id)));
+  socket.on('newMessage', (payload) => store.dispatch(addMessage(payload)));
+  socket.on('newchannel', (payload) => store.dispatch(addChannel(payload)));
+  socket.on('removeChannel', (payload) => store.dispatch(deleteChannel(payload.id)));
   socket.on('renameChannel', (payload) => {
-    dispatch(
+    store.dispatch(
       updateChannel({
         id: payload.id,
         changes: { name: payload.name },
       }),
     );
   });
+
+  const rollbarConfig = {
+    accessToken: '802dce04886547d2b3a789fe9b534926',
+    environment: 'testenv',
+  };
+
   return (
     <React.StrictMode>
-      {/* <ErrorBoundary> */}
-      <Provider store={store}>
-        <WSocketProvider socket={socket}>
-          <AuthProvider>
-            <I18nextProvider i18n={i18n}>
-              <App />
-            </I18nextProvider>
-          </AuthProvider>
-        </WSocketProvider>
-      </Provider>
-      {/* </ErrorBoundary> */}
+      <ProviderRoll config={rollbarConfig}>
+        <ErrorBoundary>
+          <Provider store={store}>
+            <WSocketProvider socket={socket}>
+              <AuthProvider>
+                <I18nextProvider i18n={i18n}>
+                  <App />
+                </I18nextProvider>
+              </AuthProvider>
+            </WSocketProvider>
+          </Provider>
+        </ErrorBoundary>
+      </ProviderRoll>
     </React.StrictMode>
   );
 };

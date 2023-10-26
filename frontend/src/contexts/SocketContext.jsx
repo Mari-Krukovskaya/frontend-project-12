@@ -7,29 +7,35 @@ export const useWSocket = () => useContext(WSocketContext);
 const WSocketProvider = ({ socket, children }) => {
   const emitNewMessage = (msg) =>
     new Promise((resolve, reject) => {
-      socket
-      .timeout(1000)
-      .emit('newMessage', msg, (error, response) => {
-        response?.status === 'ok' ? resolve(response?.data) : reject(error);
+      socket.timeout(1000).emit('newMessage', msg, (error, response) => {
+        if (response?.status === 'ok') {
+          resolve(response?.data);
+        } else {
+          reject(error);
+        }
       });
     });
 
   const emitAddChannel = (name) =>
     new Promise((resolve, reject) => {
-      socket
-        .timeout(1000)
-        .emit('newChannel', { name }, (error, response) =>
-          response?.status === 'ok' ? resolve(response?.data) : reject(error)
-        );
+      socket.timeout(1000).emit('newChannel', { name }, (error, response) => {
+        if (response?.status === 'ok') {
+          resolve(response?.data);
+        } else {
+          reject(error);
+        }
+      });
     });
 
   const emitRemoveChannel = (id) =>
     new Promise((resolve, reject) => {
-      socket
-        .timeout(1000)
-        .emit('removeChannel', { id }, (error, response) =>
-          response?.status === 'ok' ? resolve(response?.data) : reject(error)
-        );
+      socket.timeout(1000).emit('removeChannel', { id }, (error, response) => {
+        if (response?.status === 'ok') {
+          resolve(response?.data);
+        } else {
+          reject(error);
+        }
+      });
     });
 
   const emitRenameChannel = (id, name) =>
@@ -37,7 +43,11 @@ const WSocketProvider = ({ socket, children }) => {
       socket
         .timeout(1000)
         .emit('renameChannel', { id, name }, (error, response) => {
-          response?.status === 'ok' ? resolve(response?.data) : reject(error);
+          if (response?.status === 'ok') {
+            resolve(response?.data);
+          } else {
+            reject(error);
+          }
         });
     });
 
@@ -54,5 +64,4 @@ const WSocketProvider = ({ socket, children }) => {
     </WSocketContext.Provider>
   );
 };
-
 export default WSocketProvider;
