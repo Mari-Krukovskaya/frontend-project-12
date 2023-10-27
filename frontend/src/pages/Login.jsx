@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { Button, Card, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -12,12 +12,17 @@ import entry from '../images/entry.jpg';
 const Login = () => {
   const { t } = useTranslation();
   const { login } = useContext(AuthContext);
+  const inputRef = useRef(null);
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => inputRef.current.focus(), []);
+
   const validation = Yup.object().shape({
-    username: Yup.string().required(t('authForm.validForm.required')),
-    password: Yup.string().required(t('authForm.validForm.required')),
+    username: Yup.string().trim().min().max(20)
+      .required(),
+    password: Yup.string().trim().min(6).max(30)
+      .required(),
   });
 
   const formik = useFormik({
@@ -26,9 +31,10 @@ const Login = () => {
       password: '',
     },
     validationSchema: validation,
-    onSubmit: async (values) => {
+    onSubmit: async ({ username, password }) => {
       try {
-        const { data } = await axios.post(api.loginPath(), values);
+        const { data } = await axios.post(api.loginPath(), { username, password });
+        console.debug(data, 'data');
         login(data);
         setAuthError(false);
         navigate(api.home());
@@ -41,7 +47,7 @@ const Login = () => {
       }
     },
   });
-  const { handleSubmit, handleChange, values, touched, errors } = formik;
+  const { handleSubmit, handleChange, values, errors, touched } = formik;
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
@@ -64,7 +70,6 @@ const Login = () => {
                 <h1 className="text-center mb-4">{t('authForm.logIn')}</h1>
                 <Form.Floating className="form-floating mb-3">
                   <Form.Control
-                    autoFocus
                     autoComplete="username"
                     type="text"
                     id="username"
@@ -72,16 +77,17 @@ const Login = () => {
                     value={values.username}
                     onChange={handleChange}
                     placeholder={t('authForm.name')}
-                    className="form-control"
-                    // isInvalid={authError}
-                    isInvalid={touched.username && errors.username}
+                    isInvalid={
+                      (touched.username && errors.username) || authError
+                    }
+                    ref={inputRef}
                   />
-                  <Form.Control.Feedback type="invalid" tooltip>
-                    {t('authForm.required')}
-                  </Form.Control.Feedback>
                   <Form.Label htmlFor="username">
                     {t('authForm.name')}
                   </Form.Label>
+                  {/* <Form.Control.Feedback type="invalid" tooltip>
+                    {t('authForm.required')}
+                  </Form.Control.Feedback> */}
                 </Form.Floating>
                 <Form.Floating className="form-floating mb-4">
                   <Form.Control
@@ -89,22 +95,20 @@ const Login = () => {
                     id="password"
                     name="password"
                     autoComplete="current-password"
-                    autoFocus
                     value={values.password}
                     onChange={handleChange}
                     placeholder={t('auth.password')}
-                    className="form-control"
-                    // isInvalid={authError}
                     isInvalid={
                       (touched.password && errors.password) || authError
                     }
+                    ref={inputRef}
                   />
-                  <Form.Control.Feedback type="invalid" tooltip>
-                    {errors.password ?? t('authForm.notExist')}
-                  </Form.Control.Feedback>
                   <Form.Label className="form-label" htmlFor="password">
                     {t('authForm.password')}
                   </Form.Label>
+                  <Form.Control.Feedback type="invalid" tooltip>
+                    {t('authForm.notExist')}
+                  </Form.Control.Feedback>
                 </Form.Floating>
                 <Button
                   type="submit"
