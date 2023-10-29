@@ -40,6 +40,7 @@ export default {
         required: 'Обязательное поле',
         nameMinMax: 'От 3 до 20 символов',
         uniq: 'Должно быть уникальным',
+        obsceneLexicon: 'Ненормативная лексика',
       },
       nameChannel: 'Имя канала',
       buttonCancel: 'Отменить',

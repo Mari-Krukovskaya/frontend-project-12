@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useWSocket } from '../../contexts/SocketContext';
 import { selectors } from '../../slices/channelsSlice.js';
 import { Button, Modal, Form } from 'react-bootstrap';
@@ -9,21 +9,26 @@ import { useFormik } from 'formik';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { isClose } from '../../slices/modalSlice.js';
 
-export const RenameModalChannel = ({ id, show, handleClose }) => {
+export const RenameModalChannel = () => {
   const { t } = useTranslation();
   const inputRef = useRef(null);
   const wsocket = useWSocket();
-
+  const dispatch = useDispatch();
+  const { show, channelId } = useSelector((state) => state.modal);
   const channels = useSelector(selectors.selectAll);
-  const channelForRenameId = channels.filter((channel) => channel.id === id);
+  // const channelForRenameId = channels.filter((channel) => channel.id === id);
   const namesRenameChannels = channels.map((channel) => channel.name);
+  
   
     useEffect(() => {
       setTimeout(() => {
             inputRef.current.select();
       }, 0)
     }, []);
+
+const handleClose = () => dispatch(isClose({type: 'rename', channelId}));
 
     const validationSchema = Yup.object({
       name: Yup.string()
@@ -42,7 +47,7 @@ export const RenameModalChannel = ({ id, show, handleClose }) => {
         formik.setSubmitting(true);
         const newChannel = filter.clean(name)
         try {
-          await wsocket.emitRenameChannel({ channelId: channelForRenameId, name: newChannel });
+          await wsocket.emitRenameChannel(channelId.id, newChannel);
           handleClose();
           toast.success(t('toasts.renameChanel'));
         } catch (error) {

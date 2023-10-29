@@ -2,20 +2,22 @@ import { useWSocket } from '../../contexts/SocketContext';
 import { Button, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { setCurrentChannelId } from '../../slices/channelsSlice.js';
+import { isClose } from '../../slices/modalSlice.js';
 
-export const RemoveModalChannel = ({ id, show, handleClose }) => {
+export const RemoveModalChannel = () => {
   const { t } = useTranslation();
    const wsocket = useWSocket();
    const dispatch = useDispatch();
+   const { show, channelId } = useSelector((state) => state.modal);
+
    const defaultChannel = 1;
 
     const handleClick = async (id) => {
       try {
         await wsocket.emitRemoveChannel({ id });
         toast.success(t('toasts.removeChannel'));
-        dispatch(handleClose());
         dispatch(setCurrentChannelId(defaultChannel))
       } catch (error) {
         toast.error(t('toasts.errorChannel'));
@@ -25,6 +27,7 @@ export const RemoveModalChannel = ({ id, show, handleClose }) => {
     const handleButtonClick = async () => {
         await handleClick(id);
       };
+const handleClose = () => dispatch(isClose());
 
     return (
       <Modal onHide={handleClose} show={show}>

@@ -1,20 +1,27 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import filter from 'leo-profanity';
 import { useFormik } from 'formik';
+import { notify } from '../notify.js';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { isClose } from '../../slices/modalSlice.js';
 import { useWSocket } from '../../contexts/SocketContext.jsx';
 import { selectors, setCurrentChannelId } from '../../slices/channelsSlice.js';
 
-export const AddModalChannel = ({ show, handleClose }) => {
+const isProfanity = (value) => {
+  const cleanValue = filter.clean(value);
+  return cleanValue !== value;
+};
+
+export const AddModalChannel = () => {
     const { t } = useTranslation();
     const inputRef = useRef(null);
     const wsocket = useWSocket();
     const dispatch = useDispatch();
-
+    const { show } = useSelector((state) => state.modal)
     const channels = useSelector(selectors.selectAll);
     const namesAllChannels = channels.map((channel) => channel.name);
 
@@ -23,26 +30,29 @@ export const AddModalChannel = ({ show, handleClose }) => {
         .notOneOf(namesAllChannels, t('modal.validChannel.uniq'))
         .min(3, t('modal.validChannel.nameMinMax'))
         .max(20, t('modal.validChannel.nameMinMax'))
+        .test('isProfanity', t('modal.validChannel.obsceneLexicon'), 
+        (value) => !isProfanity(value))
         .required(t('modal.validChannel.uniq')),
     });
-  
+  const handleClose = () => dispatch(isClose());
+
+  useEffect(() => inputRef.current.focus(), []);
+
     const formik = useFormik({
       initialValues: {
         name: '',
       },
       validationSchema: validationSchema,
-      onSubmit: async (values) => {
-        const { name } = values;
+      onSubmit: async ({ name }) => {
         formik.setSubmitting(true);
         const filterName = filter.clean(name)
         try {
          const data = await wsocket.emitAddChannel(filterName);
-          await dispatch(setCurrentChannelId(data))
-          name.trim()
+          dispatch(setCurrentChannelId(data));
           handleClose();
-          toast.success(t('toasts.createChannel'));
+          toast(t('toasts.createChannel'));
         } catch (error) {
-          toast.error(t('toasts.errorChannel'));
+          toast(t('toasts.errorChannel'));
           console.error(error);
         }
       },
@@ -59,7 +69,7 @@ export const AddModalChannel = ({ show, handleClose }) => {
 
     return (
       <>
-      <button onClick={handleClose} className="btn btn-primary" type="button">{t('modal.buttonAdd')}</button>
+      <Button onClick={handleClose} className="btn btn-primary" type="button">{t('modal.buttonAdd')}</Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
@@ -67,7 +77,6 @@ export const AddModalChannel = ({ show, handleClose }) => {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="name">
-              <Form.Label>{t('modal.nameChannel')}</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
@@ -76,9 +85,9 @@ export const AddModalChannel = ({ show, handleClose }) => {
                 onBlur={handleBlur}
                 value={values.name}
                 ref={inputRef}
-                isInvalid={touched.name && errors.name}
-                autoFocus
+                isInvalid={touched.name &&(errors.name || isProfanity(values.name))}
               />
+              <Form.Label>{t('modal.nameChannel')}</Form.Label>
               <Form.Control.Feedback type="invalid" >
                 {errors.name}
               </Form.Control.Feedback>
