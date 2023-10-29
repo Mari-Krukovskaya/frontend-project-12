@@ -46,10 +46,10 @@ const init = async (socket) => {
   });
 
   const rollbarConfig = {
-    accessToken: '91dfc05aee82409a91eba80f987b2e2d',
+    accessToken: '15d98753f8064629a7ab2ec4aec6d3a3',
     environment: 'testenv',
   };
-
+ 
   return (
     <React.StrictMode>
       <ProviderRoll config={rollbarConfig}>
