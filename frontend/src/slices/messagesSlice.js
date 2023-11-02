@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import getData from '../apiData/getChatData';
 
@@ -10,32 +11,27 @@ const messagesSlice = createSlice({
   initialState,
   reducers: {
     addMessage: messagesAdapter.addOne,
+    addManyMessages: messagesAdapter.addMany,
   },
   extraReducers: (builder) => {
     builder
       .addCase(getData.pending, (state) => {
-        // eslint-disable-next-line no-param-reassign
         state.status = 'loading';
-        // eslint-disable-next-line no-param-reassign
         state.error = null;
       })
       .addCase(getData.fulfilled, (state, action) => {
         const { messages } = action.payload;
         messagesAdapter.setAll(state, messages);
-        // eslint-disable-next-line no-param-reassign
         state.status = 'idle';
-        // eslint-disable-next-line no-param-reassign
         state.error = null;
       })
       .addCase(getData.rejected, (state, action) => {
-        // eslint-disable-next-line no-param-reassign
         state.status = 'failed';
-        // eslint-disable-next-line no-param-reassign
         state.error = action.error;
       });
   },
 });
 
-export const { addMessage } = messagesSlice.actions;
+export const { addMessage, addManyMessages } = messagesSlice.actions;
 export const selectors = messagesAdapter.getSelectors((state) => state.messages);
 export default messagesSlice.reducer;

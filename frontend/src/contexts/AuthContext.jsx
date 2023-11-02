@@ -1,31 +1,36 @@
-import React, { createContext, useState, useMemo } from 'react';
+import React, { createContext, useState, useMemo, useCallback } from 'react';
 
 export const AuthContext = createContext({});
 
+const userName = JSON.parse(localStorage.getItem('username'));
+const tokenLocalStorage = localStorage.getItem('token');
+
 export const AuthProvider = ({ children }) => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(userName || null);
+  const [token, setToken] = useState(tokenLocalStorage);
 
-  const login = ({ data }) => {
-    localStorage.setItem('username', JSON.stringify(data));
-    setLoggedIn(true);
-  };
+  const login = useCallback((name, authToken) => {
+    localStorage.setItem('username', JSON.stringify(name));
+    localStorage.setItem('token', authToken);
+    setCurrentUser(name);
+    setToken(authToken);
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('username');
-    setLoggedIn(false);
-  };
-  const getUserName = () => {
-    const userId = JSON.parse(localStorage.getItem('username'));
-    return userId?.username;
-  };
+    localStorage.removeItem('token');
+    setCurrentUser('');
+    setToken('');
+  }, []);
+
   const authContextValue = useMemo(
     () => ({
-      loggedIn,
-      logout,
+      currentUser,
+      token,
       login,
-      getUserName,
+      logout,
     }),
-    [loggedIn],
+    [currentUser, token, login, logout],
   );
 
   return (

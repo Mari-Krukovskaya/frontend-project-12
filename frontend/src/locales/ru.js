@@ -32,7 +32,7 @@ export default {
       },
     },
     modal: {
-      buttonAdd: '+',
+      channelControl: 'Управление каналом',
       addModalChannel: 'Добавить канал',
       removeModalChannel: 'Удалить канал',
       renameModalChannel: 'Переименовать канал',
@@ -48,12 +48,13 @@ export default {
       areYouSure: 'Уверены?',
       delete: 'Удалить',
     },
-    Messages: {
-      messageCount: {
+    messages: {
+      counter: {
         count_one: '{{count}} сообщение',
         count_few: '{{count}} сообщения',
         count_many: '{{count}} сообщений',
       },
+      newMessage: 'Новое сообщение',
       messagePlaceholder: 'Введите сообщение...',
       enterMessage: 'Оправить',
     },
@@ -61,7 +62,7 @@ export default {
       createChannel: 'Канал создан',
       renameChanel: 'Канал переименован',
       removeChannel: 'Канал удалён',
-      errorChannel: 'Ошибка соединения',
+      connectError: 'Ошибка соединения',
     },
 
     pageNotFound: {

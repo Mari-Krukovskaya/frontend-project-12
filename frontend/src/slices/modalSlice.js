@@ -2,9 +2,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  show: false,
   type: null,
   channelId: null,
-  show: false,
 };
 
 const modalsSlice = createSlice({
