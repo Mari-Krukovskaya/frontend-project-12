@@ -3,10 +3,10 @@ import axios from 'axios';
 import api from '../routes/api.js';
 
 const getData = createAsyncThunk('getData', async (token) => {
-  const { data } = await axios.get(api.dataPath(), {
+  const response = await axios.get(api.dataPath(), {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return data;
+  return response.data;
 });
 
 export default getData;

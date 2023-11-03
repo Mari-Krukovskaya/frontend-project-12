@@ -2,24 +2,30 @@ import React, { createContext, useState, useMemo, useCallback } from 'react';
 
 export const AuthContext = createContext({});
 
-const userName = JSON.parse(localStorage.getItem('username'));
-const tokenLocalStorage = localStorage.getItem('token');
-
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(userName || null);
-  const [token, setToken] = useState(tokenLocalStorage);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+    return null;
+  });
 
-  const login = useCallback((name, authToken) => {
-    localStorage.setItem('username', JSON.stringify(name));
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem('token') || '';
+  });
+
+  const login = useCallback((user, authToken) => {
+    localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('token', authToken);
-    setCurrentUser(name);
+    setCurrentUser(user);
     setToken(authToken);
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('username');
+    localStorage.removeItem('user');
     localStorage.removeItem('token');
-    setCurrentUser('');
+    setCurrentUser(null);
     setToken('');
   }, []);
 

@@ -5,12 +5,6 @@ import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import filter from 'leo-profanity';
 import { Provider as ProviderRoll, ErrorBoundary } from '@rollbar/react';
-import { addMessage } from './slices/messagesSlice.js';
-import {
-  addChannel,
-  updateChannel,
-  deleteChannel,
-} from './slices/channelsSlice.js';
 import store from './slices/store.js';
 import App from './components/App';
 import { AuthProvider } from './contexts/AuthContext.jsx';
@@ -31,25 +25,6 @@ const init = async (socket) => {
 
   filter.add(filter.getDictionary('en'));
   filter.add(filter.getDictionary('ru'));
-
-  socket.on('connect', () => {
-    console.log(socket.connected, 'socket connect');
-  });
-  socket.on('disconnect', () => {
-    console.log(socket.connected, 'socket disconnect');
-  });
-
-  socket.on('newMessage', (payload) => store.dispatch(addMessage(payload)));
-  socket.on('newchannel', (payload) => store.dispatch(addChannel(payload)));
-  socket.on('removeChannel', (payload) => store.dispatch(deleteChannel(payload.id)));
-  socket.on('renameChannel', (payload) => {
-    store.dispatch(
-      updateChannel({
-        id: payload.id,
-        changes: { name: payload.name },
-      }),
-    );
-  });
 
   const rollbarConfig = {
     accessToken: '15d98753f8064629a7ab2ec4aec6d3a3',

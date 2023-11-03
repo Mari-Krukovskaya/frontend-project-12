@@ -1,8 +1,8 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import { Form, Button, Card } from 'react-bootstrap';
+import { Form, Button, Card, Image, FormGroup } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -14,8 +14,7 @@ import { AuthContext } from '../contexts/AuthContext.jsx';
 const SignUpForm = () => {
   const { t } = useTranslation();
   const refInput = useRef(null);
-  const { login } = useContext(AuthContext);
-  console.log(login, 'login');
+  const auth = useContext(AuthContext);
   const [authError, setAuthError] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +28,10 @@ const SignUpForm = () => {
       .required(t('signUp.validSignUp.required')),
     confirmPassword: Yup.string()
       .required(t('signUp.validSignUp.required'))
-      .oneOf([Yup.ref('password'), null], t('signUp.validSignUp.passwordConfirm')),
+      .oneOf(
+        [Yup.ref('password'), null],
+        t('signUp.validSignUp.passwordConfirm'),
+      ),
   });
   useEffect(() => refInput.current.focus(), []);
 
@@ -40,28 +42,27 @@ const SignUpForm = () => {
       passwordConfirm: '',
     },
     validationSchema: validation,
-    validateOnChange: true,
-    validateOnBlur: true,
-    onSubmit: async (values, { setSubmitting }) => {
+    validateOnChange: false,
+    validateOnBlur: false,
+    onSubmit: async (values) => {
       setAuthError(false);
       try {
-        const { username, password } = values;
-        const { data } = await axios.post(api.signUpPath(), {
-          username,
-          password,
+        const response = await axios.post(api.signUpPath(), {
+          username: values.username,
+          password: values.password,
         });
-        login(data);
+        console.debug(response.data, 'DATA');
+        auth.login(response.data);
         navigate(api.home());
-        formik.resetForm();
       } catch (error) {
-        setSubmitting(false);
+        formik.setSubmitting(false);
 
-        if (error.isAxiosError && error.response.status === 409) {
+        if (error.response && error.response.status === 409) {
           setAuthError(true);
+          refInput.current.select();
           return;
         }
         toast.error(`${t('toasts.connectError')}`);
-        throw error;
       }
     },
   });
@@ -72,6 +73,7 @@ const SignUpForm = () => {
   //   values,
   //   touched,
   //   errors } = formik;
+  const isDisabled = formik.isSubmitting;
 
   return (
     <div className="container-fluid h-100">
@@ -80,95 +82,97 @@ const SignUpForm = () => {
           <Card className="card shadow-sm">
             <Card.Body className="card-body row p-5">
               <div>
-                <img
+                <Image
                   src={signUp}
                   width={250}
                   height={250}
-                  className="rounded-circle"
+                  roundedCircle
                   alt={t('SignUp.registration')}
                 />
               </div>
               <Form onSubmit={formik.handleSubmit} className="w-50">
                 <h1 className="text-center mb-4">{t('signUp.registration')}</h1>
-                <Form.Floating className="form-floating mb-3">
-                  <Form.Control
-                    type="text"
-                    placeholder={t('signUp.validSignUp.usernameMinMax')}
-                    name="username"
-                    required
-                    id="username"
-                    autoComplete="username"
-                    value={formik.values.username}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    ref={refInput}
-                    isInvalid={
-                      (formik.errors.username && formik.touched.username) || authError
-                    }
-                  />
-                  <Form.Label htmlFor="username">
-                    {t('signUp.username')}
-                  </Form.Label>
-                  <Form.Control.Feedback
-                    type="invalid"
-                    tooltip
-                    placement="right"
+                <fieldset disabled={isDisabled}>
+                  <FormGroup
+                    controlId="username"
+                    className="form-floating mb-3"
                   >
-                    {formik.errors.username}
-                  </Form.Control.Feedback>
-                </Form.Floating>
-                <Form.Floating className="form-floating mb-3">
-                  <Form.Control
-                    type="password"
-                    placeholder={t('signUp.validSignUp.passwordMin')}
-                    name="password"
-                    required
-                    id="password"
-                    autoComplete="new-password"
-                    // aria-autocomplete="list"
-                    value={formik.values.password}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    isInvalid={
-                      (formik.errors.password && formik.touched.password) || authError
-                    }
-                  />
-                  <Form.Label htmlFor="password">
-                    {t('signUp.password')}
-                  </Form.Label>
-                  <Form.Control.Feedback type="invalid" tooltip>
-                    {formik.errors.password}
-                  </Form.Control.Feedback>
-                </Form.Floating>
-                <Form.Floating className="form-floating mb-3">
-                  <Form.Control
-                    type="password"
-                    placeholder={t('signUp.validSignUp.passwordConfirm')}
-                    id="passwordConfirm"
-                    name="passwordConfirm"
-                    required
-                    autoComplete="new-password"
-                    value={formik.values.passwordConfirm}
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    isInvalid={
-                      (formik.errors.passwordConfirm && formik.touched.passwordConfirm) || authError
-                    }
-                  />
-                  <Form.Label htmlFor="passConfirm">
-                    {t('signUp.confirmPassword')}
-                  </Form.Label>
-                  <Form.Control.Feedback type="invalid" tooltip>
-                    {formik.errors.passwordConfirm}
-                  </Form.Control.Feedback>
-                </Form.Floating>
-                <Button
-                  type="submit"
-                  className="w-100"
-                  variant="outline-primary"
-                >
-                  {t('signUp.buttonRegister')}
-                </Button>
+                    <Form.Control
+                      type="text"
+                      placeholder={t('signUp.validSignUp.usernameMinMax')}
+                      name="username"
+                      required
+                      autoComplete="username"
+                      value={formik.values.username}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      ref={refInput}
+                      isInvalid={
+                        (formik.touched.username && !!formik.errors.username)
+                      }
+                    />
+                    <Form.Label>{t('signUp.username')}</Form.Label>
+                    <Form.Control.Feedback
+                      type="invalid"
+                      tooltip
+                      placement="right"
+                    >
+                      {t(formik.errors.username)}
+                    </Form.Control.Feedback>
+                  </FormGroup>
+                  <FormGroup
+                    controlId="password"
+                    className="form-floating mb-3"
+                  >
+                    <Form.Control
+                      type="password"
+                      placeholder={t('signUp.validSignUp.passwordMin')}
+                      name="password"
+                      required
+                      autoComplete="new-password"
+                      aria-describedby="passwordHelpBlock"
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      isInvalid={
+                       (formik.touched.password && !!formik.errors.password)
+                      }
+                    />
+                    <Form.Label>{t('signUp.password')}</Form.Label>
+                    <Form.Control.Feedback type="invalid" tooltip>
+                      {t(formik.errors.password)}
+                    </Form.Control.Feedback>
+                  </FormGroup>
+                  <FormGroup
+                    controlId="passwordConfirm"
+                    className="form-floating mb-3"
+                  >
+                    <Form.Control
+                      type="password"
+                      placeholder={t('signUp.validSignUp.passwordConfirm')}
+                      name="passwordConfirm"
+                      required
+                      autoComplete="new-password"
+                      value={formik.values.passwordConfirm}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      isInvalid={
+                      (formik.touched.passwordConfirm && !!formik.errors.passwordConfirm)
+                      }
+                    />
+                    <Form.Label>{t('signUp.confirmPassword')}</Form.Label>
+                    <Form.Control.Feedback type="invalid" tooltip>
+                      {authError || t(formik.errors.passwordConfirm)}
+                    </Form.Control.Feedback>
+                  </FormGroup>
+                  <Button
+                    type="submit"
+                    className="w-100"
+                    variant="outline-primary"
+                  >
+                    {t('signUp.buttonRegister')}
+                  </Button>
+                </fieldset>
               </Form>
             </Card.Body>
           </Card>
