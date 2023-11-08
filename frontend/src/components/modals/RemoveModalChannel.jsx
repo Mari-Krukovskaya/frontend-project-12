@@ -16,7 +16,7 @@ const RemoveModalChannel = () => {
   const { show, channelId } = useSelector((state) => state.modal);
   const defaultChannel = 1;
 
-  const handleClick = async (id) => {
+  const handleDeleteClick = async (id) => {
     try {
       await wsocket.emitRemoveChannel({ id });
       toast.success(t('toasts.removeChannel'), notify);
@@ -25,9 +25,6 @@ const RemoveModalChannel = () => {
       toast.error(t('toasts.errorChannel'), notify);
       console.error(error);
     }
-  };
-  const handleButtonClick = async (id) => {
-    await handleClick(id);
   };
 
   const handleClose = () => dispatch(isClose({ type: 'delete', channelId }));
@@ -44,7 +41,7 @@ const RemoveModalChannel = () => {
         <Button variant="secondary" onClick={handleClose}>
           {t('modal.buttonCancel')}
         </Button>
-        <Button variant="primary" onClick={handleButtonClick}>
+        <Button variant="primary" onClick={() => handleDeleteClick(channelId)}>
           {t('modal.delete')}
         </Button>
       </Modal.Footer>

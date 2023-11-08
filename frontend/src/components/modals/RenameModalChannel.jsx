@@ -8,9 +8,9 @@ import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../../contexts/SocketContext';
-import { selectorsChannels } from '../../slices/channelsSlice.js';
 import notify from '../notify.js';
 import { isClose } from '../../slices/modalSlice.js';
+import { selectorsChannels } from '../../slices/channelsSlice';
 
 const RenameModalChannel = () => {
   const { t } = useTranslation();
@@ -19,7 +19,12 @@ const RenameModalChannel = () => {
   const dispatch = useDispatch();
   const { show, channelId } = useSelector((state) => state.modal);
   const channels = useSelector(selectorsChannels.selectAll);
-  const channelsName = channels.map((channel) => channel.name);
+
+  const currentChannel = useSelector((state) => {
+    const dataChannels = state.channels;
+    return dataChannels.find((channel) => channel.id === channelId);
+  });
+  const channelNames = channels.map((channel) => channel.name);
 
   useEffect(() => {
     setTimeout(() => {
@@ -31,7 +36,7 @@ const RenameModalChannel = () => {
 
   const validSchema = Yup.object({
     name: Yup.string()
-      .notOneOf(channelsName, t('modal.validChannel.uniq'))
+      .notOneOf(channelNames, t('modal.validChannel.uniq'))
       .min(3, t('modal.validChannel.nameMinMax'))
       .max(20, t('modal.validChannel.nameMinMax'))
       .required(t('modal.validChannel.uniq')),
@@ -39,14 +44,14 @@ const RenameModalChannel = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: channelId.name || '',
+      name: currentChannel.name,
     },
     validationSchema: validSchema,
     onSubmit: async ({ name }) => {
       formik.setSubmitting(true);
       const newName = filter.clean(name);
       try {
-        await wsocket.emitRenameChannel(channelId.id, newName);
+        await wsocket.emitRenameChannel({ id: channelId, newName });
         handleClose();
         toast.success(t('toasts.renameChanel'), notify);
       } catch (error) {
@@ -75,7 +80,6 @@ const RenameModalChannel = () => {
           <Form.Group>
             <Form.Label>{t('modal.renameModalChannel')}</Form.Label>
             <Form.Control
-              className="mb-2"
               type="text"
               name="name"
               required
@@ -84,17 +88,19 @@ const RenameModalChannel = () => {
               onBlur={handleBlur}
               value={values.name}
               ref={inputRef}
-              isInvalid={touched.name && errors.name}
+              className={`w-100 ${
+                errors.name && touched.name ? 'is-invalid' : ''
+              }`}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.name && touched.name ? errors.name : null}
+              {errors.name && touched.name}
             </Form.Control.Feedback>
           </Form.Group>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" disabled="">
               {t('modal.buttonCreate')}
             </Button>
           </Modal.Footer>

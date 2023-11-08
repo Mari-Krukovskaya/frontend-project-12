@@ -1,15 +1,16 @@
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import filter from 'leo-profanity';
 import { Provider as ProviderRoll, ErrorBoundary } from '@rollbar/react';
 import store from './slices/store.js';
 import App from './components/App';
-import { AuthProvider } from './contexts/AuthContext.jsx';
+import { AuthProvider } from './contexts/AuthContext.js';
 import resources from './locales/index.js';
-import WSocketProvider from './contexts/SocketContext.jsx';
+import WSocketProvider from './contexts/SocketContext.js';
 
 const init = async (socket) => {
   const i18n = i18next.createInstance();
@@ -27,7 +28,7 @@ const init = async (socket) => {
   filter.add(filter.getDictionary('ru'));
 
   const rollbarConfig = {
-    accessToken: '15d98753f8064629a7ab2ec4aec6d3a3',
+    accessToken: process.env.REACT_APP_ROLLBAR,
     environment: 'testenv',
   };
 
@@ -40,6 +41,7 @@ const init = async (socket) => {
               <AuthProvider>
                 <I18nextProvider i18n={i18n}>
                   <App />
+                  <ToastContainer />
                 </I18nextProvider>
               </AuthProvider>
             </WSocketProvider>

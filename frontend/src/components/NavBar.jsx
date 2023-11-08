@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { Button, Navbar, Container } from 'react-bootstrap';
 import { useNavigate, Outlet } from 'react-router-dom';
 
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/AuthContext.js';
 import api from '../routes/api';
 
 const Nav = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { token, logout } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
   const handleBtnClick = () => {
-    if (token) {
-      logout();
+    if (auth.token) {
+      auth.logout();
     }
     navigate(api.login());
   };
@@ -26,10 +26,10 @@ const Nav = () => {
           </Navbar.Brand>
           <Navbar.Collapse className="justify-content-end" />
 
-          {token ? (
+          {auth.token ? (
             <Button onClick={handleBtnClick}>{t('nav.exit')}</Button>
           ) : (
-            <Button onClick={() => navigate(api.login())}>{t('nav.login')}</Button>
+            null
           )}
         </Container>
       </Navbar>

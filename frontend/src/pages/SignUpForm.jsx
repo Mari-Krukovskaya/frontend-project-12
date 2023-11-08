@@ -2,14 +2,14 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import { Form, Button, Card, Image, FormGroup } from 'react-bootstrap';
+import { Form, FormGroup, Button, Card, Image } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 import api from '../routes/api.js';
 import signUp from '../images/signUp.jpg';
-import { AuthContext } from '../contexts/AuthContext.jsx';
+import { AuthContext } from '../contexts/AuthContext.js';
 
 const SignUpForm = () => {
   const { t } = useTranslation();
@@ -36,51 +36,50 @@ const SignUpForm = () => {
   useEffect(() => refInput.current.focus(), []);
 
   const formik = useFormik({
+    validationSchema: validation,
     initialValues: {
       username: '',
       password: '',
       passwordConfirm: '',
     },
-    validationSchema: validation,
-    validateOnChange: false,
-    validateOnBlur: false,
-    onSubmit: async (values) => {
-      setAuthError(false);
+    onSubmit: async ({ username, password }) => {
+      // eslint-disable-next-line
+      debugger;
       try {
+        setAuthError(false);
         const response = await axios.post(api.signUpPath(), {
-          username: values.username,
-          password: values.password,
+          username,
+          password,
         });
-        console.debug(response.data, 'DATA');
-        auth.login(response.data);
+        const { token } = response.data;
+        auth.login(token);
         navigate(api.home());
       } catch (error) {
         formik.setSubmitting(false);
-
         if (error.response && error.response.status === 409) {
-          setAuthError(true);
+          setAuthError(t('signUp.validSignUp.alreadyExists'));
           refInput.current.select();
           return;
         }
-        toast.error(`${t('toasts.connectError')}`);
+        if (error.code === 'ERR_NETWORK') {
+          toast.error(`${t('toasts.connectError')}`);
+        }
       }
+      formik.setSubmitting(false);
     },
+    validateOnChange: false,
+    validateOnBlur: false,
   });
-  // const {
-  //   handleSubmit,
-  //   handleBlur,
-  //   handleChange,
-  //   values,
-  //   touched,
-  //   errors } = formik;
-  const isDisabled = formik.isSubmitting;
 
+  const isInvalidUsername = formik.touched.username && formik.errors.username;
+  const isInvalidPassword = formik.touched.password && formik.errors.password;
+  const isInvalidPassConfirm = formik.touched.passwordConfirm && formik.errors.passwordConfirm;
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
         <div className="col-12 col-md-8 col-xxl-6">
           <Card className="card shadow-sm">
-            <Card.Body className="card-body row p-5">
+            <Card.Body className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
               <div>
                 <Image
                   src={signUp}
@@ -90,9 +89,9 @@ const SignUpForm = () => {
                   alt={t('SignUp.registration')}
                 />
               </div>
-              <Form onSubmit={formik.handleSubmit} className="w-50">
+              <Form onSubmit={formik.handleSubmit} className="w-50" noValidate>
                 <h1 className="text-center mb-4">{t('signUp.registration')}</h1>
-                <fieldset disabled={isDisabled}>
+                <fieldset>
                   <FormGroup
                     controlId="username"
                     className="form-floating mb-3"
@@ -107,9 +106,7 @@ const SignUpForm = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       ref={refInput}
-                      isInvalid={
-                        (formik.touched.username && !!formik.errors.username)
-                      }
+                      isInvalid={isInvalidUsername || authError}
                     />
                     <Form.Label>{t('signUp.username')}</Form.Label>
                     <Form.Control.Feedback
@@ -117,7 +114,7 @@ const SignUpForm = () => {
                       tooltip
                       placement="right"
                     >
-                      {t(formik.errors.username)}
+                      {formik.errors.username}
                     </Form.Control.Feedback>
                   </FormGroup>
                   <FormGroup
@@ -126,7 +123,7 @@ const SignUpForm = () => {
                   >
                     <Form.Control
                       type="password"
-                      placeholder={t('signUp.validSignUp.passwordMin')}
+                      placeholder="password"
                       name="password"
                       required
                       autoComplete="new-password"
@@ -134,13 +131,11 @@ const SignUpForm = () => {
                       value={formik.values.password}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      isInvalid={
-                       (formik.touched.password && !!formik.errors.password)
-                      }
+                      isInvalid={isInvalidPassword || authError}
                     />
                     <Form.Label>{t('signUp.password')}</Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>
-                      {t(formik.errors.password)}
+                      {formik.errors.password}
                     </Form.Control.Feedback>
                   </FormGroup>
                   <FormGroup
@@ -149,20 +144,18 @@ const SignUpForm = () => {
                   >
                     <Form.Control
                       type="password"
-                      placeholder={t('signUp.validSignUp.passwordConfirm')}
+                      placeholder="passwordConfirm"
                       name="passwordConfirm"
                       required
                       autoComplete="new-password"
                       value={formik.values.passwordConfirm}
                       onBlur={formik.handleBlur}
                       onChange={formik.handleChange}
-                      isInvalid={
-                      (formik.touched.passwordConfirm && !!formik.errors.passwordConfirm)
-                      }
+                      isInvalid={isInvalidPassConfirm || authError}
                     />
                     <Form.Label>{t('signUp.confirmPassword')}</Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>
-                      {authError || t(formik.errors.passwordConfirm)}
+                      {formik.errors.passwordConfirm || authError}
                     </Form.Control.Feedback>
                   </FormGroup>
                   <Button

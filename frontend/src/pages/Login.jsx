@@ -1,54 +1,63 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Image, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
+import * as yup from 'yup';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import notify from '../components/notify.js';
 
-import { AuthContext } from '../contexts/AuthContext.jsx';
-import api from '../routes/api';
+import { AuthContext } from '../contexts/AuthContext.js';
+import api from '../routes/api.js';
 import entry from '../images/entry.jpg';
 
 const Login = () => {
-  const { t } = useTranslation();
-  const { login } = useContext(AuthContext);
-  const inputRef = useRef(null);
   const [authError, setAuthError] = useState(false);
+  const { t } = useTranslation();
+  const auth = useContext(AuthContext);
+  const refInput = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => inputRef.current.focus(), []);
+  useEffect(() => refInput.current.focus(), []);
 
-  const validation = Yup.object().shape({
-    username: Yup.mixed().required(t('authForm.validForm.required')),
-    password: Yup.mixed().required(t('authForm.validForm.required')),
+  const validation = yup.object().shape({
+    username: yup.mixed().required(t('authForm.validForm.required')),
+    password: yup.mixed().required(t('authForm.validForm.required')),
   });
 
   const formik = useFormik({
+    validationSchema: validation,
     initialValues: {
       username: '',
       password: '',
     },
-    validationSchema: validation,
-    onSubmit: async ({ username, password }, { setSubmitting }) => {
+    onSubmit: async ({ username, password }) => {
       try {
-        const { data } = await axios.post(api.loginPath(), { username, password });
-        login(data);
         setAuthError(false);
-        navigate(api.home());
+        const response = await axios.post(api.loginPath(), { username, password });
+        const { token } = response.data;
+        auth.login(token);
+        navigate(api.home(), { replace: false });
       } catch (error) {
-        if (error.isAxiosError && error.response.status === 401) {
-          setAuthError(true);
+        formik.setSubmitting(false);
+        if (error.response && error.response.status === 401) {
+          setAuthError(t('authForm.validForm.notExist'));
+          refInput.current.select();
           return;
         }
-        toast.error(`${t('toasts.connectError')}`);
-      } finally {
-        setSubmitting(false);
+        if (error.code === 'ERR_NETWORK') {
+          notify.error(`${t('toasts.connectError')}`);
+        }
       }
+      formik.setSubmitting(false);
     },
+    validateOnChange: false,
+    validateOnBlur: false,
   });
-  const { handleSubmit, handleChange, values, errors, touched } = formik;
+
+  // const isDisabled = formik.isSubmitting;
+  const isInvalidUsername = formik.touched.username && formik.errors.username;
+  const isInvalidPassword = formik.touched.password && formik.errors.password;
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
@@ -56,7 +65,7 @@ const Login = () => {
           <Card className="card shadow-sm">
             <Card.Body className="card-body row p-5">
               <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                <img
+                <Image
                   src={entry}
                   width={250}
                   height={250}
@@ -65,48 +74,53 @@ const Login = () => {
                 />
               </div>
               <Form
-                onSubmit={handleSubmit}
+                onSubmit={formik.handleSubmit}
                 className="col-12 col-md-6 mt-3 mt-mb-0"
+                noValidate
               >
                 <h1 className="text-center mb-4">{t('authForm.logIn')}</h1>
                 <Form.Floating className="form-floating mb-3">
                   <Form.Control
                     type="text"
-                    placeholder={t('authForm.name')}
+                    placeholder="username"
                     required
                     autoComplete="username"
                     id="username"
                     name="username"
-                    onChange={handleChange}
-                    value={values.username}
-                    isInvalid={authError}
-                    ref={inputRef}
+                    onChange={formik.handleChange}
+                    value={formik.values.username}
+                    isInvalid={isInvalidUsername || authError}
+                    ref={refInput}
                   />
                   <Form.Label htmlFor="username">
                     {t('authForm.name')}
                   </Form.Label>
-                  <Form.Control.Feedback type="invalid" className="invalid-feedback" tooltip={errors.username && touched.username}>
-                    {errors.username}
+                  <Form.Control.Feedback
+                    type="invalid"
+                    className="invalid-feedback"
+                    tooltip
+                  >
+                    {formik.errors.username}
                   </Form.Control.Feedback>
                 </Form.Floating>
                 <Form.Floating className="form-floating mb-4">
                   <Form.Control
                     type="password"
-                    placeholder={t('auth.password')}
+                    placeholder="password"
                     required
                     id="password"
                     name="password"
                     autoComplete="current-password"
-                    onChange={handleChange}
-                    value={values.password}
-                    isInvalid={authError}
-                    ref={inputRef}
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
+                    isInvalid={isInvalidPassword || authError}
+                    ref={refInput}
                   />
                   <Form.Label className="form-label" htmlFor="password">
                     {t('authForm.password')}
                   </Form.Label>
                   <Form.Control.Feedback type="invalid" tooltip>
-                    {t('authForm.validForm.notExist')}
+                    {formik.errors.password || authError}
                   </Form.Control.Feedback>
                 </Form.Floating>
                 <Button
@@ -120,10 +134,7 @@ const Login = () => {
             </Card.Body>
             <Card.Footer className="card-footer p-4">
               <div className="text-center">
-                <span>
-                  {t('authForm.noAcc')}
-                  {' '}
-                </span>
+                <span>{t('authForm.noAcc')}</span>
                 <Link to={api.signUp()}>{t('authForm.signUp')}</Link>
               </div>
             </Card.Footer>

@@ -3,43 +3,66 @@ import { useSelector } from 'react-redux';
 import { Form, Button } from 'react-bootstrap';
 import filter from 'leo-profanity';
 import { useFormik } from 'formik';
+import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { useWSocket } from '../contexts/SocketContext';
-import { AuthContext } from '../contexts/AuthContext.jsx';
+import { toast } from 'react-toastify';
+import { useWSocket } from '../contexts/SocketContext.js';
+import { AuthContext } from '../contexts/AuthContext.js';
 import { selectors } from '../slices/messagesSlice.js';
-import { selectorsChannels } from '../slices/channelsSlice';
+import { selectorsChannels } from '../slices/channelsSlice.js';
 
 const Messages = () => {
   const { t } = useTranslation();
-  const { currentUser } = useContext(AuthContext);
-  const refInput = useRef(null);
-  const { emitNewMessage } = useWSocket();
+  const refInput = useRef();
+  const msgRefInput = useRef();
+  const socket = useWSocket();
+  const { token } = useContext(AuthContext);
+  const { currentChannelId } = useSelector((state) => state.channels);
 
   const channels = useSelector(selectorsChannels.selectAll);
-  const { currentChannelId } = useSelector((state) => state.channels);
-  const currentChannel = channels.find((channel) => currentChannelId === channel.id);
-  const currentChannelName = currentChannel ? currentChannel.name : null;
-  const selectMessages = useSelector(selectors.selectAll);
-  const messages = selectMessages.filter((msg) => msg.channelId === currentChannelId);
-  useEffect(() => {
-    refInput.current.focus();
-  }, [currentChannelId, selectMessages]);
+  const activeChannelName = (channelID) => {
+    const activeChannel = channelID.find((channel) => channel.id === currentChannelId);
+    return activeChannel ? activeChannel.name : 'general';
+  };
+
+  const messages = useSelector(selectors.selectAll);
+  const filteredMessages = messages.filter((msg) => msg.channelId === currentChannelId);
+
+  const validSchema = yup.object().shape({
+    body: yup.string().trim().required(),
+  });
 
   const formik = useFormik({
     initialValues: {
       body: '',
     },
-    onSubmit: ({ body }) => {
+    validationSchema: validSchema,
+    validateOnBlur: false,
+    onSubmit: async ({ body }) => {
+      formik.setSubmitting(true);
       const filterBody = filter.clean(body);
-      emitNewMessage({
-        body: filterBody,
-        channelId: currentChannelId,
-        username: currentUser,
-      });
-      formik.setFieldValue('body', '');
+      try {
+        await socket.emitNewMessage({
+          body: filterBody,
+          channelId: currentChannelId,
+          username: token,
+        });
+        formik.resetForm();
+      } catch (error) {
+        formik.setSubmitting(false);
+        toast.error(`${t('toasts.connectError')}`);
+      }
     },
   });
-  const { handleSubmit, handleChange, handleBlur, isSubmitting, values } = formik;
+  useEffect(
+    () => refInput.current.focus(),
+    [currentChannelId, formik.setSubmitting],
+  );
+
+  useEffect(() => {
+    msgRefInput.current.scrollTop = msgRefInput.current.scrollHeight;
+  }, [messages.length, currentChannelId]);
+
   return (
     <div className="col p-0 h-100">
       <div className="d-flex flex-column h-100">
@@ -47,43 +70,47 @@ const Messages = () => {
           <p className="m-0">
             <b>
               {' #'}
-              {currentChannelName}
+              {activeChannelName(channels)}
             </b>
           </p>
           <span className="text-muted">
-            {t('messages.counter.count', { count: messages.length })}
+            {t('messages.counter.count', { count: filteredMessages.length })}
           </span>
         </div>
-        <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-          {messages.map((msg) => (
-            <div key={msg.id} className="text-break mb-2">
-              <b>{msg.username}</b>
-              {`: ${msg.body}`}
-            </div>
-          ))}
+        <div
+          ref={msgRefInput}
+          id="messages-box"
+          className="chat-messages overflow-auto px-5 "
+        >
+          {filteredMessages.map((message) => {
+            return (
+              <div key={message.id} className="text-break mb-2">
+                <b>{message.username}</b>
+                {`: ${message.body}`}
+              </div>
+            );
+          })}
         </div>
         <div className="mt-auto px-5 py-3">
           <Form
-            onSubmit={handleSubmit}
+            onSubmit={formik.handleSubmit}
             noValidate
             className="py-1 border rounded-2"
           >
             <Form.Group className="input-group has-validation">
               <Form.Control
+                type="text"
+                required
                 className="border-0 p-0 ps-2"
-                onChange={handleChange}
-                value={values.body}
+                onChange={formik.handleChange}
+                value={formik.values.body}
                 name="body"
                 aria-label={t('messages.newMessage')}
                 ref={refInput}
-                onBlur={handleBlur}
+                onBlur={formik.handleBlur}
                 placeholder={t('messages.messagePlaceholder')}
               />
-              <Button
-                type="submit"
-                variant="group-vertical"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" variant="group-vertical" disabled="">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
