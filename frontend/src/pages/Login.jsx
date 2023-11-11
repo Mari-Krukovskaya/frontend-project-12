@@ -20,27 +20,32 @@ const Login = () => {
 
   useEffect(() => refInput.current.focus(), []);
 
-  const validation = yup.object().shape({
+  const validScema = yup.object().shape({
     username: yup.mixed().required(t('authForm.validForm.required')),
     password: yup.mixed().required(t('authForm.validForm.required')),
   });
 
   const formik = useFormik({
-    validationSchema: validation,
+    validationSchema: validScema,
     initialValues: {
       username: '',
       password: '',
     },
-    onSubmit: async ({ username, password }) => {
+    onSubmit: async (values) => {
       try {
         setAuthError(false);
-        const response = await axios.post(api.loginPath(), { username, password });
-        const { token } = response.data;
-        auth.login(token);
+        const response = await axios.post(api.loginPath(), {
+          username: values.username,
+          password: values.password,
+        });
+        console.log(response, 'res');
+        // eslint-disable-next-line
+      // debugger;
+        auth.login(response.data);
         navigate(api.home(), { replace: false });
       } catch (error) {
         formik.setSubmitting(false);
-        if (error.response && error.response.status === 401) {
+        if (error.isAxiosError && error.response.status === 401) {
           setAuthError(t('authForm.validForm.notExist'));
           refInput.current.select();
           return;

@@ -1,20 +1,12 @@
 /* eslint-disable */
 import React, { createContext, useContext } from 'react';
-import { useDispatch } from 'react-redux';
-import { addMessage } from '../slices/messagesSlice.js';
-import {
-  addChannel,
-  updateChannel,
-  deleteChannel,
-  setCurrentChannelId,
-} from '../slices/channelsSlice.js';
+import { channelsActions, messagesActions } from '../slices/index';
+import store from '../slices/store';
 
 export const WSocketContext = createContext(null);
 export const useWSocket = () => useContext(WSocketContext);
 
 const WSocketProvider = ({ socket, children }) => {
-  const dispatch = useDispatch();
-
   const handleConnect = () => {
     console.log(socket.connected, 'socket connect');
   };
@@ -24,41 +16,79 @@ const WSocketProvider = ({ socket, children }) => {
   };
 
   const handleNewMessage = (message) => {
-    dispatch(addMessage(message));
+    store.dispatch(messagesActions.addMessage(message));
   };
 
   const handleNewChannel = (channel) => {
-    dispatch(addChannel(channel));
+    store.dispatch(channelsActions.addChannel(channel));
   };
 
   const handleRemoveChannel = ({ id }) => {
-    dispatch(deleteChannel(id));
+    store.dispatch(channelsActions.deleteChannel(id));
   };
 
   const handleRenameChannel = ({ id, name }) => {
-    dispatch(updateChannel({ id, changes: { name } }));
+    store.dispatch(channelsActions.updateChannel({ id, changes: { name } }));
   };
 
-  const emitNewMessage = async (body, channelId, username) => {
-    await socket.emit('newMessage', { body, channelId, username });
+  const emitNewMessage = async ({body, channelId, username}) => {
+    try {
+      await new Promise((resolve, reject) => {
+        socket.timeout(1000).emit('newMessage',{ body, channelId, username },
+        (error, response) => {
+              if (response?.status === 'ok') {
+                resolve(response);
+              } else {
+                reject(error);
+              }
+            }
+          );
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const emitAddChannel = async (val) => {
     try {
-      const response = await socket.emit('newChannel', val);
-      dispatch(addChannel(response.data));
-      dispatch(setCurrentChannelId(response.data.id));
+      const response = await new Promise((resolve, reject) => {
+        socket.timeout(1000).emit('newChannel', val, (error, response) => {
+            if (response?.status === 'ok') {
+              resolve(response);
+            } else {
+              reject(error);
+            }
+          });
+      });
+      store.dispatch(channelsActions.addChannel(response.data));
+      store.dispatch(channelsActions.setCurrentChannelId(response.data.id));
     } catch (error) {
       console.log(error);
     }
   };
 
   const emitRemoveChannel = async (id) => {
-    await socket.emit('removeChannel', { id });
+    await new Promise((resolve, reject) => {
+      socket.timeout(1000).emit('removeChannel', { id }, (error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve();
+          }
+        });
+    });
   };
 
   const emitRenameChannel = async ({ id, name }) => {
-    await socket.emit('renameChannel', { id, name });
+    await new Promise((resolve, reject) => {
+      socket.timeout(1000).emit('renameChannel', { id, name }, (error) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve();
+          }
+        });
+    });
   };
 
   React.useEffect(() => {

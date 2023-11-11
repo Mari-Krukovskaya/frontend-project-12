@@ -32,6 +32,7 @@ export default {
       },
     },
     modal: {
+      channels: 'Каналы',
       channelControl: 'Управление каналом',
       addModalChannel: 'Добавить канал',
       removeModalChannel: 'Удалить канал',

@@ -5,47 +5,65 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { useWSocket } from '../../contexts/SocketContext';
-import { setCurrentChannelId } from '../../slices/channelsSlice.js';
-import { isClose } from '../../slices/modalSlice.js';
+import { selectCurrentChannelId } from '../../slices/channelsSelectors.js';
+import { modalsActions, channelsActions } from '../../slices/index.js';
+import store from '../../slices/store.js';
 import notify from '../notify.js';
 
-const RemoveModalChannel = () => {
+const defaultChannel = 1;
+
+const RemoveModalChannel = ({ channel }) => {
   const { t } = useTranslation();
   const wsocket = useWSocket();
   const dispatch = useDispatch();
-  const { show, channelId } = useSelector((state) => state.modal);
-  const defaultChannel = 1;
 
-  const handleDeleteClick = async (id) => {
+  const channelId = useSelector(selectCurrentChannelId);
+
+  const handleClose = () => dispatch(modalsActions.isClose({ type: 'delete', channelId }));
+
+  const handleDeleteClick = async ({ setSubmitting }) => {
     try {
-      await wsocket.emitRemoveChannel({ id });
+      await wsocket.emitRemoveChannel(channel.id);
+      if (channelId === channel.id) {
+        store.dispatch(channelsActions.setCurrentChannelId(defaultChannel));
+      }
       toast.success(t('toasts.removeChannel'), notify);
-      dispatch(setCurrentChannelId(defaultChannel));
+      handleClose();
+      setSubmitting(true);
     } catch (error) {
       toast.error(t('toasts.errorChannel'), notify);
       console.error(error);
+      setSubmitting(false);
     }
   };
 
-  const handleClose = () => dispatch(isClose({ type: 'delete', channelId }));
-
   return (
-    <Modal onHide={handleClose} show={show}>
+    <>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.removeModalChannel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>{t('modal.areYouSure')}</p>
+        <div className="d-flex justify-content-end">
+          <Button
+            variant="secondary"
+            onClick={handleClose}
+            type="button"
+            className="me-2"
+          >
+            {t('modal.buttonCancel')}
+          </Button>
+
+          <Button
+            variant="danger"
+            onClick={() => handleDeleteClick(channelId)}
+            type="submit"
+          >
+            {t('modal.delete')}
+          </Button>
+        </div>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          {t('modal.buttonCancel')}
-        </Button>
-        <Button variant="primary" onClick={() => handleDeleteClick(channelId)}>
-          {t('modal.delete')}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    </>
   );
 };
 export default RemoveModalChannel;

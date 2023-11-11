@@ -11,7 +11,7 @@ const Nav = () => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const handleBtnClick = () => {
-    if (auth.token) {
+    if (auth.user) {
       auth.logout();
     }
     navigate(api.login());
@@ -26,7 +26,7 @@ const Nav = () => {
           </Navbar.Brand>
           <Navbar.Collapse className="justify-content-end" />
 
-          {auth.token ? (
+          {auth.user ? (
             <Button onClick={handleBtnClick}>{t('nav.exit')}</Button>
           ) : (
             null

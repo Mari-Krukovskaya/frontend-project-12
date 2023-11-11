@@ -1,33 +1,29 @@
 import React, { useContext, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, InputGroup } from 'react-bootstrap';
 import filter from 'leo-profanity';
+import cn from 'classnames';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../contexts/SocketContext.js';
 import { AuthContext } from '../contexts/AuthContext.js';
-import { selectors } from '../slices/messagesSlice.js';
-import { selectorsChannels } from '../slices/channelsSlice.js';
+import { selectors as messagesSelectors } from '../slices/messagesSlice.js';
+import { selectCurrentChannelId, selectCurrentId } from '../slices/channelsSelectors.js';
 
 const Messages = () => {
   const { t } = useTranslation();
-  const refInput = useRef();
-  const msgRefInput = useRef();
+  const refInput = useRef(null);
+  const msgRefInput = useRef(null);
   const socket = useWSocket();
-  const { token } = useContext(AuthContext);
-  const { currentChannelId } = useSelector((state) => state.channels);
-
-  const channels = useSelector(selectorsChannels.selectAll);
-  const activeChannelName = (channelID) => {
-    const activeChannel = channelID.find((channel) => channel.id === currentChannelId);
-    return activeChannel ? activeChannel.name : 'general';
-  };
-
-  const messages = useSelector(selectors.selectAll);
-  const filteredMessages = messages.filter((msg) => msg.channelId === currentChannelId);
-
+  const { user } = useContext(AuthContext);
+  const currentChannelName = useSelector(selectCurrentChannelId);
+  const currentId = useSelector(selectCurrentId);
+  const messages = useSelector(messagesSelectors.selectAll);
+  // eslint-disable-next-line
+  // debugger
+  const filteredMessages = messages.filter((msg) => msg.channelId === currentId);
   const validSchema = yup.object().shape({
     body: yup.string().trim().required(),
   });
@@ -39,13 +35,16 @@ const Messages = () => {
     validationSchema: validSchema,
     validateOnBlur: false,
     onSubmit: async ({ body }) => {
+      // eslint-disable-next-line
+      // debugger
       formik.setSubmitting(true);
       const filterBody = filter.clean(body);
+      // console.log(filterBody, 'body');
       try {
         await socket.emitNewMessage({
           body: filterBody,
-          channelId: currentChannelId,
-          username: token,
+          channelId: currentId,
+          username: user.username,
         });
         formik.resetForm();
       } catch (error) {
@@ -56,21 +55,21 @@ const Messages = () => {
   });
   useEffect(
     () => refInput.current.focus(),
-    [currentChannelId, formik.setSubmitting],
+    [currentChannelName, filteredMessages],
   );
 
   useEffect(() => {
     msgRefInput.current.scrollTop = msgRefInput.current.scrollHeight;
-  }, [messages.length, currentChannelId]);
+  }, [filteredMessages.length]);
 
+  const isButtonDisable = formik.isSubmitting || formik.values.body.trim() === '';
   return (
     <div className="col p-0 h-100">
       <div className="d-flex flex-column h-100">
         <div className="bg-light mb-4 p-3 shadow-sm small">
           <p className="m-0">
             <b>
-              {' #'}
-              {activeChannelName(channels)}
+              {currentChannelName && `# ${currentChannelName}`}
             </b>
           </p>
           <span className="text-muted">
@@ -82,11 +81,11 @@ const Messages = () => {
           id="messages-box"
           className="chat-messages overflow-auto px-5 "
         >
-          {filteredMessages.map((message) => {
+          {filteredMessages.map(({ id, username, body }) => {
             return (
-              <div key={message.id} className="text-break mb-2">
-                <b>{message.username}</b>
-                {`: ${message.body}`}
+              <div key={id} className="text-break mb-2">
+                <b>{username}</b>
+                {`: ${body}`}
               </div>
             );
           })}
@@ -97,7 +96,7 @@ const Messages = () => {
             noValidate
             className="py-1 border rounded-2"
           >
-            <Form.Group className="input-group has-validation">
+            <InputGroup className={cn({ 'has-validation': isButtonDisable })}>
               <Form.Control
                 type="text"
                 required
@@ -110,7 +109,7 @@ const Messages = () => {
                 onBlur={formik.handleBlur}
                 placeholder={t('messages.messagePlaceholder')}
               />
-              <Button type="submit" variant="group-vertical" disabled="">
+              <Button type="submit" variant="group-vertical" disabled={isButtonDisable}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
@@ -127,7 +126,7 @@ const Messages = () => {
                   {t('messages.enterMessage')}
                 </span>
               </Button>
-            </Form.Group>
+            </InputGroup>
           </Form>
         </div>
       </div>

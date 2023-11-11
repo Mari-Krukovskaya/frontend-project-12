@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
+// import * as yup from 'yup';
 import { Form, FormGroup, Button, Card, Image } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -12,51 +12,56 @@ import signUp from '../images/signUp.jpg';
 import { AuthContext } from '../contexts/AuthContext.js';
 
 const SignUpForm = () => {
-  const { t } = useTranslation();
-  const refInput = useRef(null);
-  const auth = useContext(AuthContext);
   const [authError, setAuthError] = useState(false);
+  const { t } = useTranslation();
+  const auth = useContext(AuthContext);
+  const refInput = useRef(null);
   const navigate = useNavigate();
 
-  const validation = Yup.object().shape({
-    username: Yup.string()
-      .min(3, t('signUp.validSignUp.usernameMinMax'))
-      .max(20, t('signUp.validSignUp.usernameMinMax'))
-      .required(t('signUp.validSignUp.required')),
-    password: Yup.string()
-      .min(6, t('signUp.validSignUp.passwordMin'))
-      .required(t('signUp.validSignUp.required')),
-    confirmPassword: Yup.string()
-      .required(t('signUp.validSignUp.required'))
-      .oneOf(
-        [Yup.ref('password'), null],
-        t('signUp.validSignUp.passwordConfirm'),
-      ),
-  });
+  // // eslint-disable-next-line
+  // debugger;
+  // const validSchema = yup.object().shape({
+  //   username: yup.string()
+  //     .min(3, t('signUp.validSignUp.usernameMinMax'))
+  //     .max(20, t('signUp.validSignUp.usernameMinMax'))
+  //     .required(t('signUp.validSignUp.required')),
+  //   password: yup.string()
+  //     .min(6, t('signUp.validSignUp.passwordMin'))
+  //     .required(t('signUp.validSignUp.required')),
+  //   confirmPassword: yup.string()
+  //     .required(t('signUp.validSignUp.required'))
+  //     .oneOf(
+  //       [yup.ref('password')],
+  //       t('signUp.validSignUp.passwordConfirm'),
+  //     ),
+  // });
+  // eslint-disable-next-line
+  // debugger;
   useEffect(() => refInput.current.focus(), []);
 
   const formik = useFormik({
-    validationSchema: validation,
+    // validationSchema: validSchema,
     initialValues: {
       username: '',
       password: '',
       passwordConfirm: '',
     },
-    onSubmit: async ({ username, password }) => {
-      // eslint-disable-next-line
-      debugger;
+    onSubmit: async (values) => {
       try {
         setAuthError(false);
+        // eslint-disable-next-line
+        // debugger;
         const response = await axios.post(api.signUpPath(), {
-          username,
-          password,
+          username: values.username,
+          password: values.password,
         });
-        const { token } = response.data;
-        auth.login(token);
+        auth.login(response.data);
+        // eslint-disable-next-line
+        // debugger;
         navigate(api.home());
       } catch (error) {
         formik.setSubmitting(false);
-        if (error.response && error.response.status === 409) {
+        if (error.isAxiosError && error.response.status === 409) {
           setAuthError(t('signUp.validSignUp.alreadyExists'));
           refInput.current.select();
           return;
@@ -98,7 +103,7 @@ const SignUpForm = () => {
                   >
                     <Form.Control
                       type="text"
-                      placeholder={t('signUp.validSignUp.usernameMinMax')}
+                      placeholder="username"
                       name="username"
                       required
                       autoComplete="username"

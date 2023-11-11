@@ -4,35 +4,31 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
+import cn from 'classnames';
 import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../../contexts/SocketContext';
 import notify from '../notify.js';
-import { isClose } from '../../slices/modalSlice.js';
-import { selectorsChannels } from '../../slices/channelsSlice';
+import { modalsActions } from '../../slices/index.js';
+import { selectors } from '../../slices/channelsSelectors.js';
 
-const RenameModalChannel = () => {
+const RenameModalChannel = ({ channel }) => {
   const { t } = useTranslation();
   const inputRef = useRef(null);
   const wsocket = useWSocket();
   const dispatch = useDispatch();
-  const { show, channelId } = useSelector((state) => state.modal);
-  const channels = useSelector(selectorsChannels.selectAll);
-
-  const currentChannel = useSelector((state) => {
-    const dataChannels = state.channels;
-    return dataChannels.find((channel) => channel.id === channelId);
-  });
-  const channelNames = channels.map((channel) => channel.name);
+  const channels = useSelector(selectors.selectAll);
+  const channelNames = channels.map((channelName) => channelName.name);
 
   useEffect(() => {
     setTimeout(() => {
       inputRef.current.select();
+      inputRef.current.select();
     }, 0);
   }, []);
 
-  const handleClose = () => dispatch(isClose());
+  const handleClose = () => dispatch(modalsActions.isClose());
 
   const validSchema = Yup.object({
     name: Yup.string()
@@ -44,14 +40,14 @@ const RenameModalChannel = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: currentChannel.name,
+      name: channel.name,
     },
     validationSchema: validSchema,
     onSubmit: async ({ name }) => {
       formik.setSubmitting(true);
       const newName = filter.clean(name);
       try {
-        await wsocket.emitRenameChannel({ id: channelId, newName });
+        await wsocket.emitRenameChannel(channel.id, newName);
         handleClose();
         toast.success(t('toasts.renameChanel'), notify);
       } catch (error) {
@@ -70,8 +66,13 @@ const RenameModalChannel = () => {
     touched,
     errors,
   } = formik;
+
+  const newClass = cn('mb-2', 'form-control', {
+    'is-invalid': errors.name && touched.name,
+  });
+
   return (
-    <Modal show={show} onHide={handleClose}>
+    <>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.renameMOdalChannel')}</Modal.Title>
       </Modal.Header>
@@ -83,30 +84,27 @@ const RenameModalChannel = () => {
               type="text"
               name="name"
               required
-              disabled={isSubmitting}
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.name}
               ref={inputRef}
-              className={`w-100 ${
-                errors.name && touched.name ? 'is-invalid' : ''
-              }`}
+              className={newClass}
             />
             <Form.Control.Feedback type="invalid">
               {errors.name && touched.name}
             </Form.Control.Feedback>
           </Form.Group>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" className="me-2" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
-            <Button variant="primary" type="submit" disabled="">
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
               {t('modal.buttonCreate')}
             </Button>
           </Modal.Footer>
         </Form>
       </Modal.Body>
-    </Modal>
+    </>
   );
 };
 export default RenameModalChannel;

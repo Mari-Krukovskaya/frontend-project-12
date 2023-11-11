@@ -2,16 +2,18 @@ import React, { useRef, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, Form } from 'react-bootstrap';
-import * as Yup from 'yup';
+import cn from 'classnames';
+import * as yup from 'yup';
 import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
-
+import store from '../../slices/store.js';
 import notify from '../notify.js';
-import { isClose } from '../../slices/modalSlice.js';
+import { modalsActions } from '../../slices/index.js';
 import { useWSocket } from '../../contexts/SocketContext.js';
-import { setCurrentChannelId, selectorsChannels } from '../../slices/channelsSlice.js';
+import { selectors } from '../../slices/channelsSelectors.js';
 import { AuthContext } from '../../contexts/AuthContext.js';
+import { actions as channelsActions } from '../../slices/channelsSlice.js';
 
 const isProfanity = (value) => {
   const cleanValue = filter.clean(value);
@@ -23,15 +25,12 @@ const AddModalChannel = () => {
   const inputRef = useRef(null);
   const wsocket = useWSocket();
   const dispatch = useDispatch();
-  const { token } = useContext(AuthContext);
-
-  const { show } = useSelector((state) => state.modal);
-  const channels = useSelector(selectorsChannels.selectAll);
+  const { user } = useContext(AuthContext);
+  const channels = useSelector(selectors.selectAll);
   const namesAllChannels = channels.map((channel) => channel.name);
-  console.log(namesAllChannels, 'nameChannels');
 
-  const validSchema = Yup.object({
-    name: Yup.string()
+  const validSchema = yup.object({
+    name: yup.string()
       .notOneOf(namesAllChannels, t('modal.validChannel.uniq'))
       .min(3, t('modal.validChannel.nameMinMax'))
       .max(20, t('modal.validChannel.nameMinMax'))
@@ -42,7 +41,7 @@ const AddModalChannel = () => {
       )
       .required(t('modal.validChannel.uniq')),
   });
-  const handleClose = () => dispatch(isClose());
+  const handleClose = () => dispatch(modalsActions.isClose());
 
   useEffect(() => inputRef.current.focus(), []);
 
@@ -55,25 +54,22 @@ const AddModalChannel = () => {
       formik.setSubmitting(true);
       const filterName = filter.clean(name);
       try {
-        const data = await wsocket.emitAddChannel(filterName, token);
-        dispatch(setCurrentChannelId(data));
+        const data = await wsocket.emitAddChannel(filterName, user);
+        store.dispatch(channelsActions.setCurrentChannelId(data.id));
         handleClose();
-        toast(t('toasts.createChannel'), notify);
+        toast.success(t('toasts.createChannel', notify));
       } catch (error) {
-        toast(t('toasts.errorChannel'), notify);
-        console.error(error);
+        formik.setSubmitting(false);
+        toast.error(t('toasts.connectError', notify));
       }
     },
   });
-
-  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = formik;
-
+  const { handleSubmit, isSubmitting, handleChange, handleBlur, values, errors, touched } = formik;
+  const newClass = cn('mb-2', 'form-control', {
+    'is-invalid': errors.name && touched.name,
+  });
   return (
     <>
-      <Button onClick={handleClose} className="btn btn-primary" type="button">
-        {t('modal.buttonAdd')}
-      </Button>
-      <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
         </Modal.Header>
@@ -88,9 +84,7 @@ const AddModalChannel = () => {
                 onBlur={handleBlur}
                 value={values.name}
                 ref={inputRef}
-                className={`w-100 ${
-                  errors.name && touched.name ? 'is-invalid' : ''
-                }`}
+                className={newClass}
               />
               <Form.Label>{t('modal.nameChannel')}</Form.Label>
               <Form.Control.Feedback type="invalid">
@@ -101,13 +95,12 @@ const AddModalChannel = () => {
               <Button variant="secondary" onClick={handleClose}>
                 {t('modal.buttonCancel')}
               </Button>
-              <Button variant="primary" type="submit" disabled>
+              <Button variant="primary" type="submit" disabled={isSubmitting}>
                 {t('modal.buttonCreate')}
               </Button>
             </Modal.Footer>
           </Form>
         </Modal.Body>
-      </Modal>
     </>
   );
 };
