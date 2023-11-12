@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, Form } from 'react-bootstrap';
-import cn from 'classnames';
 import * as yup from 'yup';
 import filter from 'leo-profanity';
 import { useFormik } from 'formik';
@@ -27,10 +26,12 @@ const AddModalChannel = () => {
   const dispatch = useDispatch();
   const { user } = useContext(AuthContext);
   const channels = useSelector(selectors.selectAll);
+  const { show } = useSelector((state) => state.modal);
   const namesAllChannels = channels.map((channel) => channel.name);
 
   const validSchema = yup.object({
-    name: yup.string()
+    name: yup
+      .string()
       .notOneOf(namesAllChannels, t('modal.validChannel.uniq'))
       .min(3, t('modal.validChannel.nameMinMax'))
       .max(20, t('modal.validChannel.nameMinMax'))
@@ -41,7 +42,9 @@ const AddModalChannel = () => {
       )
       .required(t('modal.validChannel.uniq')),
   });
-  const handleClose = () => dispatch(modalsActions.isClose());
+  const handleClose = () => {
+    dispatch(modalsActions.isClose({ type: null, channelId: null }));
+  };
 
   useEffect(() => inputRef.current.focus(), []);
 
@@ -64,44 +67,52 @@ const AddModalChannel = () => {
       }
     },
   });
-  const { handleSubmit, isSubmitting, handleChange, handleBlur, values, errors, touched } = formik;
-  const newClass = cn('mb-2', 'form-control', {
-    'is-invalid': errors.name && touched.name,
-  });
+  const {
+    handleSubmit,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    values,
+    errors,
+    touched,
+  } = formik;
+
   return (
-    <>
-        <Modal.Header closeButton>
-          <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="name">
-              <Form.Control
-                type="text"
-                name="name"
-                required
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.name}
-                ref={inputRef}
-                className={newClass}
-              />
-              <Form.Label>{t('modal.nameChannel')}</Form.Label>
-              <Form.Control.Feedback type="invalid">
-                {errors.name && touched.name}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>
-                {t('modal.buttonCancel')}
-              </Button>
-              <Button variant="primary" type="submit" disabled={isSubmitting}>
-                {t('modal.buttonCreate')}
-              </Button>
-            </Modal.Footer>
-          </Form>
-        </Modal.Body>
-    </>
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="name">
+            <Form.Control
+              type="text"
+              name="name"
+              required
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.name}
+              ref={inputRef}
+              className="mb-2"
+              disabled={isSubmitting}
+              isInvalid={errors.name && touched.name}
+            />
+            <Form.Label>{t('modal.nameChannel')}</Form.Label>
+            <Form.Control.Feedback type="invalid">
+              {errors.name}
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              {t('modal.buttonCancel')}
+            </Button>
+            <Button variant="primary" onClick={handleSubmit}>
+              {t('modal.buttonCreate')}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
 };
 

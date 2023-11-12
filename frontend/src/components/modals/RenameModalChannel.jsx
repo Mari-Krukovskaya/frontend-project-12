@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Button, Modal, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
-import cn from 'classnames';
 import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
@@ -19,13 +18,11 @@ const RenameModalChannel = ({ channel }) => {
   const wsocket = useWSocket();
   const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
+  const { show, channelId } = useSelector((state) => state.modal);
   const channelNames = channels.map((channelName) => channelName.name);
 
   useEffect(() => {
-    setTimeout(() => {
-      inputRef.current.select();
-      inputRef.current.select();
-    }, 0);
+    setTimeout(() => inputRef.current.select());
   }, []);
 
   const handleClose = () => dispatch(modalsActions.isClose());
@@ -46,10 +43,12 @@ const RenameModalChannel = ({ channel }) => {
     onSubmit: async ({ name }) => {
       formik.setSubmitting(true);
       const newName = filter.clean(name);
+      const data = { name: newName, id: channelId };
       try {
-        await wsocket.emitRenameChannel(channel.id, newName);
-        handleClose();
+        await wsocket.emitRenameChannel(data);
+        formik.resetForm();
         toast.success(t('toasts.renameChanel'), notify);
+        handleClose();
       } catch (error) {
         toast.error(t('toasts.errorChannel'), notify);
         formik.setSubmitting(false);
@@ -67,12 +66,8 @@ const RenameModalChannel = ({ channel }) => {
     errors,
   } = formik;
 
-  const newClass = cn('mb-2', 'form-control', {
-    'is-invalid': errors.name && touched.name,
-  });
-
   return (
-    <>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.renameMOdalChannel')}</Modal.Title>
       </Modal.Header>
@@ -84,27 +79,29 @@ const RenameModalChannel = ({ channel }) => {
               type="text"
               name="name"
               required
+              disabled={isSubmitting}
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.name}
               ref={inputRef}
-              className={newClass}
+              className="mb-2"
+              isInvalid={errors.name && touched.name}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.name && touched.name}
+              {errors.name}
             </Form.Control.Feedback>
           </Form.Group>
           <Modal.Footer>
-            <Button variant="secondary" className="me-2" onClick={handleClose}>
+            <Button variant="secondary" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
-            <Button variant="primary" type="submit" disabled={isSubmitting}>
+            <Button variant="primary" onClick={handleSubmit}>
               {t('modal.buttonCreate')}
             </Button>
           </Modal.Footer>
         </Form>
       </Modal.Body>
-    </>
+    </Modal>
   );
 };
 export default RenameModalChannel;

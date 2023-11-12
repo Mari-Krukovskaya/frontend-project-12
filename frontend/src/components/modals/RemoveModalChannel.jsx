@@ -18,6 +18,7 @@ const RemoveModalChannel = ({ channel }) => {
   const dispatch = useDispatch();
 
   const channelId = useSelector(selectCurrentChannelId);
+  const { show } = useSelector((state) => state.modal);
 
   const handleClose = () => dispatch(modalsActions.isClose({ type: 'delete', channelId }));
 
@@ -38,32 +39,22 @@ const RemoveModalChannel = ({ channel }) => {
   };
 
   return (
-    <>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.removeModalChannel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>{t('modal.areYouSure')}</p>
         <div className="d-flex justify-content-end">
-          <Button
-            variant="secondary"
-            onClick={handleClose}
-            type="button"
-            className="me-2"
-          >
+          <Button variant="secondary" onClick={handleClose}>
             {t('modal.buttonCancel')}
           </Button>
-
-          <Button
-            variant="danger"
-            onClick={() => handleDeleteClick(channelId)}
-            type="submit"
-          >
+          <Button variant="danger" onClick={handleDeleteClick()}>
             {t('modal.delete')}
           </Button>
         </div>
       </Modal.Body>
-    </>
+    </Modal>
   );
 };
 export default RemoveModalChannel;
