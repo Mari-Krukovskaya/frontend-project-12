@@ -64,6 +64,7 @@ export default {
       renameChanel: 'Канал переименован',
       removeChannel: 'Канал удалён',
       connectError: 'Ошибка соединения',
+      uknownError: 'Неизвестная ошибка',
     },
 
     pageNotFound: {

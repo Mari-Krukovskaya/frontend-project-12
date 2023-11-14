@@ -8,18 +8,17 @@ import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../../contexts/SocketContext';
-import notify from '../notify.js';
-import { modalsActions } from '../../slices/index.js';
+import { modalsActions, channelsActions } from '../../slices/index.js';
 import { selectors } from '../../slices/channelsSelectors.js';
 
-const RenameModalChannel = ({ channel }) => {
+const RenameModalChannel = () => {
   const { t } = useTranslation();
   const inputRef = useRef(null);
   const wsocket = useWSocket();
   const dispatch = useDispatch();
-  const channels = useSelector(selectors.selectAll);
-  const { show, channelId } = useSelector((state) => state.modal);
-  const channelNames = channels.map((channelName) => channelName.name);
+  const { channelId } = useSelector((state) => state.modal);
+  const channels = useSelector((selectors.selectAll));
+  const channelNames = channels.map((channel) => channel.name);
 
   useEffect(() => {
     setTimeout(() => inputRef.current.select());
@@ -27,75 +26,66 @@ const RenameModalChannel = ({ channel }) => {
 
   const handleClose = () => dispatch(modalsActions.isClose());
 
-  const validSchema = Yup.object({
+  const validSchema = Yup.object().shape({
     name: Yup.string()
-      .notOneOf(channelNames, t('modal.validChannel.uniq'))
+      .trim()
+      .required(t('modal.validChannel.required'))
       .min(3, t('modal.validChannel.nameMinMax'))
       .max(20, t('modal.validChannel.nameMinMax'))
-      .required(t('modal.validChannel.uniq')),
+      .notOneOf(channelNames, t('modal.validChannel.uniq')),
   });
 
   const formik = useFormik({
     initialValues: {
-      name: channel.name,
+      name: channelId.name,
     },
     validationSchema: validSchema,
     onSubmit: async ({ name }) => {
-      formik.setSubmitting(true);
+      // formik.setSubmitting(true);
       const newName = filter.clean(name);
       const data = { name: newName, id: channelId };
       try {
         await wsocket.emitRenameChannel(data);
+        dispatch(channelsActions.updateChannel({ id: channelId, changes: { name } }));
         formik.resetForm();
-        toast.success(t('toasts.renameChanel'), notify);
+        toast.success(t('toasts.renameChanel'));
         handleClose();
       } catch (error) {
-        toast.error(t('toasts.errorChannel'), notify);
-        formik.setSubmitting(false);
-        console.error(error);
+        toast.error(t('toasts.connectError'));
       }
     },
   });
-  const {
-    isSubmitting,
-    handleSubmit,
-    handleChange,
-    handleBlur,
-    values,
-    touched,
-    errors,
-  } = formik;
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.renameMOdalChannel')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={formik.handleSubmit}>
           <Form.Group>
             <Form.Label>{t('modal.renameModalChannel')}</Form.Label>
             <Form.Control
               type="text"
               name="name"
               required
-              disabled={isSubmitting}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.name}
+              disabled={formik.isSubmitting}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.name}
               ref={inputRef}
               className="mb-2"
-              isInvalid={errors.name && touched.name}
+              isInvalid={formik.errors.name && formik.touched.name}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.name}
+              {t(formik.errors.name)}
             </Form.Control.Feedback>
           </Form.Group>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="primary" disabled={formik.isSubmitting}>
               {t('modal.buttonCreate')}
             </Button>
           </Modal.Footer>

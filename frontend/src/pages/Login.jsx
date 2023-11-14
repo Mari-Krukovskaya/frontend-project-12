@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import axios from 'axios';
-import notify from '../components/notify.js';
+import { toast } from 'react-toastify';
 
 import { AuthContext } from '../contexts/AuthContext.js';
 import api from '../routes/api.js';
@@ -38,7 +38,6 @@ const Login = () => {
           username: values.username,
           password: values.password,
         });
-        console.log(response, 'res');
         // eslint-disable-next-line
       // debugger;
         auth.login(response.data);
@@ -51,7 +50,7 @@ const Login = () => {
           return;
         }
         if (error.code === 'ERR_NETWORK') {
-          notify.error(`${t('toasts.connectError')}`);
+          toast.error(`${t('toasts.connectError')}`);
         }
       }
       formik.setSubmitting(false);

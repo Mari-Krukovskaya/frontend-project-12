@@ -5,41 +5,37 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { useWSocket } from '../../contexts/SocketContext';
-import { selectCurrentChannelId } from '../../slices/channelsSelectors.js';
+// import { selectCurrentChannelId } from '../../slices/channelsSelectors.js';
 import { modalsActions, channelsActions } from '../../slices/index.js';
 import store from '../../slices/store.js';
-import notify from '../notify.js';
 
 const defaultChannel = 1;
 
-const RemoveModalChannel = ({ channel }) => {
+const RemoveModalChannel = () => {
   const { t } = useTranslation();
   const wsocket = useWSocket();
   const dispatch = useDispatch();
 
-  const channelId = useSelector(selectCurrentChannelId);
-  const { show } = useSelector((state) => state.modal);
+  // const channelId = useSelector(selectCurrentChannelId);
+  const { channelId } = useSelector((state) => state.modal);
 
-  const handleClose = () => dispatch(modalsActions.isClose({ type: 'delete', channelId }));
+  const handleClose = () => dispatch(modalsActions.isClose());
 
-  const handleDeleteClick = async ({ setSubmitting }) => {
+  const handleDeleteClick = async () => {
     try {
-      await wsocket.emitRemoveChannel(channel.id);
-      if (channelId === channel.id) {
-        store.dispatch(channelsActions.setCurrentChannelId(defaultChannel));
-      }
-      toast.success(t('toasts.removeChannel'), notify);
+      await wsocket.emitRemoveChannel({ id: channelId });
+      store.dispatch(channelsActions.setCurrentChannelId(defaultChannel));
+      toast.success(t('toasts.removeChannel'));
+      // setSubmitting(true);
       handleClose();
-      setSubmitting(true);
     } catch (error) {
-      toast.error(t('toasts.errorChannel'), notify);
-      console.error(error);
-      setSubmitting(false);
+      // formik.setSubmitting(false);
+      toast.error(t('toasts.connectError'));
     }
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.removeModalChannel')}</Modal.Title>
       </Modal.Header>

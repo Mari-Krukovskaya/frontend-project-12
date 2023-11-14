@@ -6,11 +6,13 @@ import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import filter from 'leo-profanity';
 import { Provider as ProviderRoll, ErrorBoundary } from '@rollbar/react';
+
 import store from './slices/store.js';
 import App from './components/App';
 import { AuthProvider } from './contexts/AuthContext.js';
 import resources from './locales/index.js';
 import WSocketProvider from './contexts/SocketContext.js';
+import { channelsActions, messagesActions } from './slices/index.js';
 
 const init = async (socket) => {
   const i18n = i18next.createInstance();
@@ -27,6 +29,30 @@ const init = async (socket) => {
   filter.add(filter.getDictionary('en'));
   filter.add(filter.getDictionary('ru'));
 
+  socket.on('connect', () => {
+    console.log(socket.connected, 'socket connect');
+  });
+
+  socket.on('disconnect', () => {
+    console.log(socket.connected, 'socket disconnect');
+  });
+
+  socket.on('newMessage', (message) => {
+    store.dispatch(messagesActions.addMessage(message));
+  });
+
+  socket.on('newChannel', (channel) => {
+    store.dispatch(channelsActions.addChannel(channel));
+  });
+
+  socket.on('removeChannel', ({ id }) => {
+    store.dispatch(channelsActions.deleteChannel(id));
+  });
+
+  socket.on('renameChannel', ({ id, name }) => {
+    store.dispatch(channelsActions.updateChannel({ id, changes: { name } }));
+  });
+
   const rollbarConfig = {
     accessToken: process.env.REACT_APP_ROLLBAR,
     environment: 'testenv',
@@ -41,7 +67,15 @@ const init = async (socket) => {
               <AuthProvider>
                 <I18nextProvider i18n={i18n}>
                   <App />
-                  <ToastContainer />
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    closeOnClick
+                    pauseOnHover
+                    draggable
+                    theme="light"
+                  />
                 </I18nextProvider>
               </AuthProvider>
             </WSocketProvider>
