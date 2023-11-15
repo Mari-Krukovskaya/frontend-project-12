@@ -32,10 +32,10 @@ const NewChannel = ({
         <span className="visually-hidden">{t('modal.channelControl')}</span>
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Item onClick={handleRemoveChannel}>
+        <Dropdown.Item href="#" onClick={handleRemoveChannel}>
           {t('modal.removeModalChannel')}
         </Dropdown.Item>
-        <Dropdown.Item onClick={handleRenameChannel}>
+        <Dropdown.Item href="#" onClick={handleRenameChannel}>
           {t('modal.renameModalChannel')}
         </Dropdown.Item>
       </Dropdown.Menu>

@@ -10,7 +10,7 @@ const modals = {
 };
 
 const ShowModal = () => {
-  const { type } = useSelector((state) => state.modal);
+  const type = useSelector((state) => state.modal.type);
 
   const ComponentModal = modals[type];
   return (

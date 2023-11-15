@@ -24,11 +24,11 @@ const AddModalChannel = () => {
   const inputRef = useRef(null);
   const wsocket = useWSocket();
   const dispatch = useDispatch();
-
+  const { show } = useSelector((state) => state.modal);
   const channels = useSelector(selectors.selectAll);
   const channelsNames = channels.map((channel) => channel.name);
   // eslint-disable-next-line
-  // debugger
+  //debugger
   const validSchema = yup.object().shape({
     name: yup
       .string()
@@ -58,11 +58,11 @@ const AddModalChannel = () => {
     validateOnChange: false,
     onSubmit: async (values) => {
       // eslint-disable-next-line
-     // debugger
+      debugger
       const filterName = filter.clean(values.name);
       try {
-        const data = await wsocket.emitAddChannel({ name: filterName });
-        store.dispatch(channelsActions.setCurrentChannelId(data.id));
+        const { id } = await wsocket.emitAddChannel(filterName);
+        store.dispatch(channelsActions.setCurrentChannelId({ id }));
         toast.success(t('toasts.createChannel'));
         formik.setSubmitting(true);
         handleClose();
@@ -74,7 +74,7 @@ const AddModalChannel = () => {
   });
 
   return (
-    <Modal show onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
       </Modal.Header>
@@ -91,11 +91,11 @@ const AddModalChannel = () => {
               ref={inputRef}
               className="mb-2"
               disabled={formik.isSubmitting}
-              isInvalid={formik.errors.name && !formik.touched.name}
+              isInvalid={(formik.errors.name && formik.touched.name)}
             />
             <Form.Label>{t('modal.nameChannel')}</Form.Label>
             <Form.Control.Feedback type="invalid">
-              {formik.errors.name}
+              {t(formik.errors.name)}
             </Form.Control.Feedback>
           </Form.Group>
           <Modal.Footer>

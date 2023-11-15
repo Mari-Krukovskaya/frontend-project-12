@@ -20,7 +20,9 @@ const modalsSlice = createSlice({
         channelId,
       };
     },
-    isClose: () => initialState,
+    isClose: (state) => ({
+      ...state, type: null, channelId: null,
+    }),
   },
 });
 

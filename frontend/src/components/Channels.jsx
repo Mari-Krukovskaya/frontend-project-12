@@ -11,13 +11,29 @@ import { channelsActions, modalsActions } from '../slices/index.js';
 import NewChannel from './NewChannel.jsx';
 import store from '../slices/store.js';
 
+const DefaultChannel = ({
+  channel,
+  currentChannelId,
+  handleCurrentChannel,
+}) => {
+  <Button
+    type="button"
+    variant={channel.id === currentChannelId ? 'secondary' : ''}
+    className="w-100 rounded-0 text-start"
+    onClick={handleCurrentChannel(channel.id)}
+  >
+    <span className="me-1">#</span>
+    {channel.name}
+  </Button>;
+};
+
 const Channels = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
   const currentChannelId = useSelector(selectCurrentChannelId);
   // eslint-disable-next-line
-   //debugger
+  //debugger
   const handleAddChannel = () => {
     dispatch(
       modalsActions.isOpen({ type: 'adding', show: true, channelId: '' }),
@@ -40,18 +56,6 @@ const Channels = () => {
     );
   };
 
-  const DefaultChannel = (channel) => {
-    console.log(channel, 'channel');
-    <Button
-      type="button"
-      variant={channel.id === currentChannelId ? 'secondary' : ''}
-      className="w-100 rounded-0 text-start"
-      onClick={handleCurrentChannel(channel.id)}
-    >
-      <span className="me-1">#</span>
-      {channel.name}
-    </Button>;
-  };
   return (
     <Col className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
       <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
@@ -74,7 +78,11 @@ const Channels = () => {
         {channels.map((channel) => (
           <li key={channel.id} className="nav-item w-100">
             {!channel.removable ? (
-              <DefaultChannel channel={channel} />
+              <DefaultChannel
+                channel={channel}
+                currentChannelId={currentChannelId}
+                handleCurrentChannel={handleCurrentChannel}
+              />
             ) : (
               <NewChannel
                 channel={channel}
