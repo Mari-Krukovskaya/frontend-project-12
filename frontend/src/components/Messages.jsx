@@ -8,10 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useWSocket } from '../contexts/SocketContext.js';
 import { AuthContext } from '../contexts/AuthContext.js';
-import { selectors as messagesSelectors } from '../slices/messagesSlice.js';
+import { messagesSelectors } from '../slices/messagesSlice.js';
 import {
   selectCurrentChannelId,
-  selectCurrentChannel,
+  selectors,
+  // selectCurrentChannel,
 } from '../slices/channelsSelectors.js';
 
 const Messages = () => {
@@ -20,9 +21,9 @@ const Messages = () => {
   const msgRefInput = useRef(null);
   const socket = useWSocket();
   const { user } = useContext(AuthContext);
-
+  const channels = useSelector(selectors.selectAll);
   const currentId = useSelector(selectCurrentChannelId);
-  const currentChannel = useSelector(selectCurrentChannel);
+  const currentChannel = channels.find(({ id }) => id === currentId);
   const messages = useSelector(messagesSelectors.selectAll);
 
   const filteredMessages = messages.filter(
@@ -73,7 +74,7 @@ const Messages = () => {
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              <b>{`# ${currentChannel?.name}`}</b>
+              <b>{`# ${currentChannel?.name || ''}`}</b>
             </p>
             <span className="text-muted">
               {t('messages.counter.count', { count: filteredMessages.length })}

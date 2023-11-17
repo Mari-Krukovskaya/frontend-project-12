@@ -93,7 +93,8 @@ const AddModalChannel = () => {
               value={formik.values.name}
               ref={inputRef}
               className="mb-2"
-              disabled={formik.isSubmitting}
+              // disabled={formik.isSubmitting}
+              autoFocus
               isInvalid={formik.errors.name && formik.touched.name}
             />
             <Form.Label>{t('modal.nameChannel')}</Form.Label>

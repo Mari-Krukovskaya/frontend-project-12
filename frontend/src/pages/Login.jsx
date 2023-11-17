@@ -15,10 +15,10 @@ const Login = () => {
   const [authError, setAuthError] = useState(false);
   const { t } = useTranslation();
   const auth = useContext(AuthContext);
-  const refInput = useRef(null);
+  const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => refInput.current.focus(), []);
+  useEffect(() => inputRef.current.focus(), []);
 
   const validScema = yup.object().shape({
     username: yup.mixed().required(t('authForm.validForm.required')),
@@ -45,8 +45,9 @@ const Login = () => {
       } catch (error) {
         formik.setSubmitting(false);
         if (error.isAxiosError && error.response.status === 401) {
-          setAuthError(t('authForm.validForm.notExist'));
-          refInput.current.select();
+          // setAuthError(t('authForm.validForm.notExist'));
+          setAuthError(true);
+          inputRef.current.select();
           return;
         }
         if (error.code === 'ERR_NETWORK') {
@@ -59,7 +60,6 @@ const Login = () => {
     validateOnBlur: false,
   });
 
-  // const isDisabled = formik.isSubmitting;
   const isInvalidUsername = formik.touched.username && formik.errors.username;
   const isInvalidPassword = formik.touched.password && formik.errors.password;
   return (
@@ -94,7 +94,7 @@ const Login = () => {
                     onChange={formik.handleChange}
                     value={formik.values.username}
                     isInvalid={isInvalidUsername || authError}
-                    ref={refInput}
+                    ref={inputRef}
                   />
                   <Form.Label htmlFor="username">
                     {t('authForm.name')}
@@ -118,13 +118,13 @@ const Login = () => {
                     onChange={formik.handleChange}
                     value={formik.values.password}
                     isInvalid={isInvalidPassword || authError}
-                    ref={refInput}
                   />
                   <Form.Label className="form-label" htmlFor="password">
                     {t('authForm.password')}
                   </Form.Label>
                   <Form.Control.Feedback type="invalid" tooltip>
-                    {formik.errors.password || authError}
+                    {/* {formik.errors.password || authError} */}
+                    {t(formik.errors.password) || t('authForm.validForm.notExist')}
                   </Form.Control.Feedback>
                 </Form.Floating>
                 <Button

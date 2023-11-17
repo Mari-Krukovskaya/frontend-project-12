@@ -20,10 +20,10 @@ const RenameModalChannel = () => {
   const inputRef = useRef(null);
   const wsocket = useWSocket();
   const dispatch = useDispatch();
+  const channels = useSelector(selectors.selectAll);
   const { channelId } = useSelector((state) => state.modal);
   const currentChannel = useSelector((state) => selectors.selectById(state, channelId));
 
-  const channels = useSelector((selectors.selectAll));
   const channelNames = channels.map((channelName) => channelName.name);
 
   useEffect(() => {
@@ -60,6 +60,8 @@ const RenameModalChannel = () => {
         handleClose();
         toast.success(t('toasts.renameChanel'));
       } catch (error) {
+        // eslint-disable-next-line
+        debugger;
         formik.setSubmitting(false);
 
         if (error.isAxiosError && error.response.status === 401) {
