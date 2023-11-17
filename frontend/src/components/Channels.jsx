@@ -11,29 +11,25 @@ import { channelsActions, modalsActions } from '../slices/index.js';
 import NewChannel from './NewChannel.jsx';
 import store from '../slices/store.js';
 
-const DefaultChannel = ({
-  channel,
-  currentChannelId,
-  handleCurrentChannel,
-}) => {
-  <Button
-    type="button"
-    variant={channel.id === currentChannelId ? 'secondary' : ''}
-    className="w-100 rounded-0 text-start"
-    onClick={handleCurrentChannel(channel.id)}
-  >
-    <span className="me-1">#</span>
-    {channel.name}
-  </Button>;
+const DefaultChannel = ({ channel, handleCurrentChannel }) => {
+  const currentChannelId = useSelector(selectCurrentChannelId);
+  return (
+    <Button
+      type="button"
+      variant={channel.id === currentChannelId ? 'secondary' : 'default'}
+      className="w-100 rounded-0 text-start"
+      onClick={() => handleCurrentChannel(channel.id)}
+    >
+      <span className="me-1">#</span>
+      {channel.name}
+    </Button>
+  );
 };
-
 const Channels = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
-  const currentChannelId = useSelector(selectCurrentChannelId);
-  // eslint-disable-next-line
-  //debugger
+
   const handleAddChannel = () => {
     dispatch(
       modalsActions.isOpen({ type: 'adding', show: true, channelId: '' }),
@@ -80,15 +76,14 @@ const Channels = () => {
             {!channel.removable ? (
               <DefaultChannel
                 channel={channel}
-                currentChannelId={currentChannelId}
                 handleCurrentChannel={handleCurrentChannel}
               />
             ) : (
               <NewChannel
                 channel={channel}
-                handleCurrentChannel={handleCurrentChannel}
-                handleRemoveChannel={handleRemoveChannel}
-                handleRenameChannel={handleRenameChannel}
+                handleCurrentChannel={() => handleCurrentChannel(channel.id)}
+                handleRemoveChannel={() => handleRemoveChannel(channel.id)}
+                handleRenameChannel={() => handleRenameChannel(channel.id)}
               />
             )}
           </li>

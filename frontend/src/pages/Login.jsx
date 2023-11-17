@@ -39,7 +39,7 @@ const Login = () => {
           password: values.password,
         });
         // eslint-disable-next-line
-        debugger;
+        // debugger;
         auth.login(response.data);
         navigate(api.home(), { replace: false });
       } catch (error) {

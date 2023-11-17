@@ -7,21 +7,27 @@ import * as Yup from 'yup';
 import filter from 'leo-profanity';
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
+
 import { useWSocket } from '../../contexts/SocketContext';
 import { modalsActions } from '../../slices/index.js';
-import { selectors } from '../../slices/channelsSelectors.js';
+import {
+  selectors,
+  // selectCurrentChannel,
+} from '../../slices/channelsSelectors.js';
 
 const RenameModalChannel = () => {
   const { t } = useTranslation();
-  const inputRef = useRef();
+  const inputRef = useRef(null);
   const wsocket = useWSocket();
   const dispatch = useDispatch();
-  const { channelId, show } = useSelector((state) => state.modal);
+  const { channelId } = useSelector((state) => state.modal);
+  const currentChannel = useSelector((state) => selectors.selectById(state, channelId));
+
   const channels = useSelector((selectors.selectAll));
-  const channelNames = channels.map((channel) => channel.name);
+  const channelNames = channels.map((channelName) => channelName.name);
 
   useEffect(() => {
-    inputRef.current.select();
+    inputRef.current.focus();
     inputRef.current.select();
   }, []);
 
@@ -37,19 +43,22 @@ const RenameModalChannel = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: channelId,
+      name: currentChannel?.name,
     },
     validationSchema: validSchema,
     onSubmit: async ({ name }) => {
       // formik.setSubmitting(true);
       const newName = filter.clean(name);
-      const data = { name: newName, id: channelId };
+      const data = {
+        id: currentChannel.id,
+        name: newName,
+        removable: currentChannel.removable,
+      };
       try {
         await wsocket.emitRenameChannel(data);
-        // dispatch(channelsActions.updateChannel({ id: channelId, changes: { name } }));
-        // formik.resetForm();
-        toast.success(t('toasts.renameChanel'));
+        formik.resetForm();
         handleClose();
+        toast.success(t('toasts.renameChanel'));
       } catch (error) {
         formik.setSubmitting(false);
 
@@ -63,7 +72,7 @@ const RenameModalChannel = () => {
   });
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.renameModalChannel')}</Modal.Title>
       </Modal.Header>
@@ -81,7 +90,7 @@ const RenameModalChannel = () => {
               value={formik.values.name}
               ref={inputRef}
               className="mb-2"
-              isInvalid={(formik.errors.name && formik.touched.name)}
+              isInvalid={formik.errors.name && formik.touched.name}
             />
             <Form.Control.Feedback type="invalid">
               {t(formik.errors.name)}

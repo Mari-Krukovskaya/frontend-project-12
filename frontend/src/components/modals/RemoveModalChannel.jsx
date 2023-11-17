@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { useWSocket } from '../../contexts/SocketContext';
-// import { selectCurrentChannelId } from '../../slices/channelsSelectors.js';
 import { modalsActions, channelsActions } from '../../slices/index.js';
-// import store from '../../slices/store.js';
+import { selectCurrentId } from '../../slices/channelsSelectors.js';
 
 const defaultChannel = 1;
 
@@ -16,24 +15,26 @@ const RemoveModalChannel = () => {
   const wsocket = useWSocket();
   const dispatch = useDispatch();
 
-  // const channelId = useSelector(selectCurrentChannelId);
-  const { channelId, show } = useSelector((state) => state.modal);
+  const channelId = useSelector((state) => state.modal.channelId);
+  const currentId = useSelector(selectCurrentId);
 
   const handleClose = () => dispatch(modalsActions.isClose());
 
   const handleDeleteClick = async () => {
     try {
-      await wsocket.emitRemoveChannel({ id: channelId });
-      dispatch(channelsActions.setCurrentChannelId(defaultChannel));
-      toast.success(t('toasts.removeChannel'));
+      await wsocket.emitRemoveChannel(channelId);
       handleClose();
+      if (channelId === currentId) {
+        dispatch(channelsActions.setCurrentChannelId(defaultChannel));
+      }
+      toast.success(t('toasts.removeChannel'));
     } catch (error) {
       toast.error(t('toasts.connectError'));
     }
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.removeModalChannel')}</Modal.Title>
       </Modal.Header>

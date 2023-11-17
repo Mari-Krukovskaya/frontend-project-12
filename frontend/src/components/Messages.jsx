@@ -26,9 +26,10 @@ const Messages = () => {
   const messages = useSelector(messagesSelectors.selectAll);
 
   const filteredMessages = messages.filter(
-    (msg) => msg.channelId === currentId.id,
+    (msg) => msg.channelId === currentId,
   );
-
+  // eslint-disable-next-line
+  //debugger;
   useEffect(() => {
     refInput.current.focus();
   }, [currentId, filteredMessages]);
@@ -49,12 +50,12 @@ const Messages = () => {
     // validateOnBlur: false,
     onSubmit: async (values) => {
       // eslint-disable-next-line
-      //debugger;
+      debugger;
       formik.setSubmitting(true);
       const filterBody = filter.clean(values.body);
       const message = {
         body: filterBody,
-        channelId: currentId.id,
+        channelId: currentId,
         username: user.username,
       };
       try {

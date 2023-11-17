@@ -16,5 +16,5 @@ export const selectCurrentChannelId = createSelector(
 export const selectCurrentChannel = createSelector(
   selectors.selectAll,
   selectCurrentId,
-  (channels, currentId) => channels.find((channel) => channel.id === currentId),
+  (channels, currentId) => Object.values(channels).find((channel) => channel.id === currentId),
 );

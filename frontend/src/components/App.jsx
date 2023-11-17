@@ -6,27 +6,6 @@ import HomePage from '../pages/HomePage.jsx';
 import Nav from './NavBar.jsx';
 import SignUpForm from '../pages/SignUpForm.jsx';
 import api from '../routes/api.js';
-// import { AuthContext } from '../contexts/AuthContext.jsx';
-
-// const StartRoute = ({ children }) => {
-//   const auth = useContext(AuthContext);
-//   const location = useLocation();
-//   return auth.currentUser ? (
-//     children
-//   ) : (
-//     <Navigate to={api.login()} state={{ from: location }} />
-//   );
-// };
-
-// const HomeRoute = ({ children }) => {
-//   const auth = useContext(AuthContext);
-//   const location = useLocation();
-//   return auth.currentUser ? (
-//     children
-//   ) : (
-//     <Navigate to={api.home()} state={{ from: location }} />
-//   );
-// };
 
 const App = () => (
   <BrowserRouter>

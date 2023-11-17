@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import { modalsActions } from '../../slices/index.js';
 import { useWSocket } from '../../contexts/SocketContext.js';
 import { selectors } from '../../slices/channelsSelectors.js';
-// import { AuthContext } from '../../contexts/AuthContext.js';
 import { actions as channelsActions } from '../../slices/channelsSlice.js';
 import store from '../../slices/store.js';
 
@@ -24,7 +23,6 @@ const AddModalChannel = () => {
   const inputRef = useRef(null);
   const wsocket = useWSocket();
   const dispatch = useDispatch();
-  const { show } = useSelector((state) => state.modal);
   const channels = useSelector(selectors.selectAll);
   const channelsNames = channels.map((channel) => channel.name);
   // eslint-disable-next-line
@@ -58,7 +56,7 @@ const AddModalChannel = () => {
     validateOnChange: false,
     onSubmit: async (values) => {
       // eslint-disable-next-line
-      debugger
+      //debugger;
       const filterName = filter.clean(values.name);
       try {
         const { id } = await wsocket.emitAddChannel(filterName);
@@ -68,13 +66,18 @@ const AddModalChannel = () => {
         handleClose();
       } catch (error) {
         formik.setSubmitting(false);
+        if (error.isAxiosError && error.response.status === 401) {
+          inputRef.current.select();
+
+          return;
+        }
         toast.error(t('toasts.connectError'));
       }
     },
   });
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
       </Modal.Header>
@@ -91,7 +94,7 @@ const AddModalChannel = () => {
               ref={inputRef}
               className="mb-2"
               disabled={formik.isSubmitting}
-              isInvalid={(formik.errors.name && formik.touched.name)}
+              isInvalid={formik.errors.name && formik.touched.name}
             />
             <Form.Label>{t('modal.nameChannel')}</Form.Label>
             <Form.Control.Feedback type="invalid">

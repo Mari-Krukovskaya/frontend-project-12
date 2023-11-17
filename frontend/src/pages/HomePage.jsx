@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+
 import Channels from '../components/Channels.jsx';
 import Messages from '../components/Messages.jsx';
 import ShowModal from '../components/modals/index.jsx';
 import { messagesActions, channelsActions } from '../slices/index.js';
 import { AuthContext } from '../contexts/AuthContext.js';
 import api from '../routes/api.js';
-import getData from '../apiData/getChatData.js';
-import store from '../slices/store.js';
 
 const getAuthHeader = (data) => {
   if (data && data.token) {
@@ -22,9 +23,12 @@ const getAuthHeader = (data) => {
 const HomePage = () => {
   const [isSpinner, setIsSpinner] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { logout, user } = useContext(AuthContext);
 
+  // eslint-disable-next-line
+  // debugger;
   useEffect(() => {
     const fetchData = async () => {
       setIsSpinner(true);
@@ -33,11 +37,17 @@ const HomePage = () => {
         return;
       }
       try {
-        const data = await getData(getAuthHeader(user));
+        const userData = {
+          headers: getAuthHeader(user),
+        };
+        const {
+          data: { channels, messages },
+        } = await axios.get(api.dataPath(), userData);
         setIsSpinner(false);
-        store.dispatch(channelsActions.addManyChannels(data.channels));
-        store.dispatch(channelsActions.setCurrentChannelId(data.selectCurrentChannelId));
-        store.dispatch(messagesActions.addManyMessages(data.messages));
+        // eslint-disable-next-line
+        //debugger;
+        dispatch(channelsActions.addManyChannels(channels));
+        dispatch(messagesActions.addManyMessages(messages));
       } catch (error) {
         if (error.isAxiosError && error.response.status === 401) {
           logout();
@@ -48,7 +58,7 @@ const HomePage = () => {
       }
     };
     fetchData();
-  }, [logout, navigate, t, user]);
+  }, [dispatch, logout, user, navigate, t]);
 
   return (
     <Container className="container h-100 my-4 overflow-hidden rounded shadow">
