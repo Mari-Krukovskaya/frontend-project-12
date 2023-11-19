@@ -154,7 +154,7 @@ const SignUpForm = () => {
                       || authError}
                     />
                     <Form.Label htmlFor="confirmPassword">
-                      {t('signUp.validSignUp.confirmPassword')}
+                      {t('signUp.confirmPassword')}
                     </Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>
                     {authError === false ? formik.errors.confirmPassword : t('signUp.validSignUp.alreadyExists')}
