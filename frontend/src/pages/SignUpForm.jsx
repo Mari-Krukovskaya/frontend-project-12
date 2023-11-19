@@ -93,7 +93,7 @@ const SignUpForm = () => {
                   <h1 className="text-center mb-4">
                     {t('signUp.registration')}
                   </h1>
-                  <Form.Floating className="form-floating mb-3">
+                  <Form.Floating className="mb-3">
                     <Form.Control
                       type="text"
                       name="username"
@@ -139,7 +139,7 @@ const SignUpForm = () => {
                       {formik.errors.password}
                     </Form.Control.Feedback>
                   </Form.Floating>
-                  <Form.Floating className="form-floating mb-4">
+                  <Form.Floating className="mb-4">
                     <Form.Control
                       type="password"
                       placeholder={t('signUp.confirmPassword')}
@@ -157,7 +157,7 @@ const SignUpForm = () => {
                       {t('signUp.validSignUp.confirmPassword')}
                     </Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>
-                      {authError === false ? formik.errors.confirmPassword : t('signUp.validSignUp.alreadyExists')}
+                    {authError === false ? formik.errors.confirmPassword : t('signUp.validSignUp.alreadyExists')}
                     </Form.Control.Feedback>
                   </Form.Floating>
                   <Button

@@ -26,14 +26,15 @@ const Login = () => {
   });
 
   const formik = useFormik({
-    validationSchema: validScema,
     initialValues: {
       username: '',
       password: '',
     },
+    validationSchema: validScema,
     onSubmit: async (values) => {
+      formik.setSubmitting(true);
+      setAuthError(false);
       try {
-        setAuthError(false);
         const { data } = await axios.post(api.loginPath(), {
           username: values.username,
           password: values.password,
@@ -56,8 +57,6 @@ const Login = () => {
     validateOnBlur: false,
   });
 
-  const isInvalidUsername = formik.touched.username && formik.errors.username;
-  const isInvalidPassword = formik.touched.password && formik.errors.password;
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
@@ -78,7 +77,7 @@ const Login = () => {
                 className="col-12 col-md-6 mt-3 mt-mb-0"
               >
                 <h1 className="text-center mb-4">{t('authForm.logIn')}</h1>
-                <Form.Floating className="form-floating mb-3">
+                <Form.Floating className="mb-3">
                   <Form.Control
                     type="text"
                     placeholder="username"
@@ -88,7 +87,7 @@ const Login = () => {
                     name="username"
                     onChange={formik.handleChange}
                     value={formik.values.username}
-                    isInvalid={isInvalidUsername || authError}
+                    isInvalid={authError}
                     ref={inputRef}
                   />
                   <Form.Label htmlFor="username">
@@ -102,7 +101,7 @@ const Login = () => {
                     {t(formik.errors.username)}
                   </Form.Control.Feedback>
                 </Form.Floating>
-                <Form.Floating className="form-floating mb-4">
+                <Form.Floating className="mb-4">
                   <Form.Control
                     type="password"
                     placeholder="password"
@@ -112,7 +111,7 @@ const Login = () => {
                     autoComplete="current-password"
                     onChange={formik.handleChange}
                     value={formik.values.password}
-                    isInvalid={isInvalidPassword || authError}
+                    isInvalid={authError}
                   />
                   <Form.Label className="form-label" htmlFor="password">
                     {t('authForm.password')}
