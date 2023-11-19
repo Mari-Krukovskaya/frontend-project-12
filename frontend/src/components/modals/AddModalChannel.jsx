@@ -24,13 +24,12 @@ const AddModalChannel = () => {
   const wsocket = useWSocket();
   const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
-  const channelsNames = channels.map((channel) => channel.name);
+  const channelsNames = channels.map((channelName) => channelName.name);
   // eslint-disable-next-line
   //debugger
   const validSchema = yup.object().shape({
     name: yup
       .string()
-      .trim()
       .required(t('modal.validChannel.required'))
       .min(3, t('modal.validChannel.nameMinMax'))
       .max(20, t('modal.validChannel.nameMinMax'))
@@ -85,7 +84,6 @@ const AddModalChannel = () => {
         <Form onSubmit={formik.handleSubmit}>
           <Form.Group controlId="name">
             <Form.Control
-              type="text"
               name="name"
               required
               onChange={formik.handleChange}
@@ -93,27 +91,28 @@ const AddModalChannel = () => {
               value={formik.values.name}
               ref={inputRef}
               className="mb-2"
-              // disabled={formik.isSubmitting}
-              autoFocus
-              isInvalid={formik.errors.name && formik.touched.name}
+              // autoFocus
+              isInvalid={!!formik.errors.name}
+              disabled={formik.isSubmitting}
             />
-            <Form.Label>{t('modal.nameChannel')}</Form.Label>
+            <Form.Label htmlFor="name" visuallyHidden>{t('modal.nameChannel')}</Form.Label>
             <Form.Control.Feedback type="invalid">
-              {t(formik.errors.name)}
+              {formik.errors.name}
             </Form.Control.Feedback>
           </Form.Group>
-          <Modal.Footer>
-            <Button variant="secondary" type="button" onClick={handleClose}>
+          <div className="d-flex justify-content-end">
+            <Button variant="secondary" className="btn btn-primary me-2 mt-2" type="button" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
             <Button
+              className="btn btn-primary mt-2"
               variant="primary"
               type="submit"
-              onClick={formik.handleSubmit}
+              // onClick={formik.handleSubmit}
             >
               {t('modal.buttonCreate')}
             </Button>
-          </Modal.Footer>
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

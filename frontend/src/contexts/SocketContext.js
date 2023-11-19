@@ -5,7 +5,7 @@ export const WSocketContext = createContext(null);
 export const useWSocket = () => useContext(WSocketContext);
 
 const WSocketProvider = ({ socket, children }) => {
-
+ 
   const emitNewMessage = (message) =>
     new Promise((resolve, reject) => {
       socket

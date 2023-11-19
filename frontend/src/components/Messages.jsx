@@ -51,7 +51,7 @@ const Messages = () => {
     // validateOnBlur: false,
     onSubmit: async (values) => {
       // eslint-disable-next-line
-      debugger;
+      // debugger;
       formik.setSubmitting(true);
       const filterBody = filter.clean(values.body);
       const message = {
@@ -128,7 +128,7 @@ const Messages = () => {
                   ref={refInput}
                   onBlur={formik.handleBlur}
                   placeholder={t('messages.messagePlaceholder')}
-                  autoComplete="off"
+                  // autoComplete="off"
                   disabled={formik.isSubmitting}
                 />
                 <Button

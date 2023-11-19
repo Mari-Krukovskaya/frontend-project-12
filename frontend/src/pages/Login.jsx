@@ -14,7 +14,7 @@ import entry from '../images/entry.jpg';
 const Login = () => {
   const [authError, setAuthError] = useState(false);
   const { t } = useTranslation();
-  const auth = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -34,20 +34,16 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         setAuthError(false);
-        const response = await axios.post(api.loginPath(), {
+        const { data } = await axios.post(api.loginPath(), {
           username: values.username,
           password: values.password,
         });
-        // eslint-disable-next-line
-        // debugger;
-        auth.login(response.data);
+        login(data);
         navigate(api.home(), { replace: false });
       } catch (error) {
         formik.setSubmitting(false);
         if (error.isAxiosError && error.response.status === 401) {
-          // setAuthError(t('authForm.validForm.notExist'));
           setAuthError(true);
-          inputRef.current.select();
           return;
         }
         if (error.code === 'ERR_NETWORK') {
@@ -80,7 +76,6 @@ const Login = () => {
               <Form
                 onSubmit={formik.handleSubmit}
                 className="col-12 col-md-6 mt-3 mt-mb-0"
-                noValidate
               >
                 <h1 className="text-center mb-4">{t('authForm.logIn')}</h1>
                 <Form.Floating className="form-floating mb-3">
@@ -104,7 +99,7 @@ const Login = () => {
                     className="invalid-feedback"
                     tooltip
                   >
-                    {formik.errors.username}
+                    {t(formik.errors.username)}
                   </Form.Control.Feedback>
                 </Form.Floating>
                 <Form.Floating className="form-floating mb-4">
@@ -123,7 +118,6 @@ const Login = () => {
                     {t('authForm.password')}
                   </Form.Label>
                   <Form.Control.Feedback type="invalid" tooltip>
-                    {/* {formik.errors.password || authError} */}
                     {t(formik.errors.password) || t('authForm.validForm.notExist')}
                   </Form.Control.Feedback>
                 </Form.Floating>

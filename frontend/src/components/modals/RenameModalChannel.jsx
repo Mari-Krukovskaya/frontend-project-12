@@ -1,4 +1,4 @@
-import 'react-toastify/dist/ReactToastify.css';
+// import 'react-toastify/dist/ReactToastify.css';
 import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -46,9 +46,8 @@ const RenameModalChannel = () => {
       name: currentChannel?.name,
     },
     validationSchema: validSchema,
-    onSubmit: async ({ name }) => {
-      // formik.setSubmitting(true);
-      const newName = filter.clean(name);
+    onSubmit: async (values) => {
+      const newName = filter.clean(values.name);
       const data = {
         id: currentChannel.id,
         name: newName,
@@ -57,17 +56,17 @@ const RenameModalChannel = () => {
       try {
         await wsocket.emitRenameChannel(data);
         formik.resetForm();
-        handleClose();
         toast.success(t('toasts.renameChanel'));
+        handleClose();
       } catch (error) {
         // eslint-disable-next-line
         debugger;
         formik.setSubmitting(false);
 
-        if (error.isAxiosError && error.response.status === 401) {
-          inputRef.current.select();
-          return;
-        }
+        // if (error.isAxiosError && error.response.status === 401) {
+        //   inputRef.current.select();
+        //   return;
+        // }
         toast.error(t('toasts.connectError'));
       }
     },
@@ -81,10 +80,10 @@ const RenameModalChannel = () => {
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
           <Form.Group>
-            <Form.Label>{t('modal.renameModalChannel')}</Form.Label>
             <Form.Control
-              type="text"
               name="name"
+              type="text"
+              id="name"
               required
               disabled={formik.isSubmitting}
               onChange={formik.handleChange}
@@ -94,18 +93,25 @@ const RenameModalChannel = () => {
               className="mb-2"
               isInvalid={formik.errors.name && formik.touched.name}
             />
+            <Form.Label visuallyHidden>{t('modal.renameModalChannel')}</Form.Label>
             <Form.Control.Feedback type="invalid">
-              {t(formik.errors.name)}
+              {formik.errors.name}
             </Form.Control.Feedback>
           </Form.Group>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+          <div className="d-flex justify-content-end">
+            <Button className="btn btn-primary me-2 mt-2" variant="secondary" type="button" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
-            <Button variant="primary" onClick={formik.handleSubmit}>
+            <Button
+              className="btn btn-primary mt-2"
+              variant="primary"
+              type="submit"
+              // disabled={formik.isSubmitting}
+              // onClick={formik.handleSubmit}
+            >
               {t('modal.buttonCreate')}
             </Button>
-          </Modal.Footer>
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

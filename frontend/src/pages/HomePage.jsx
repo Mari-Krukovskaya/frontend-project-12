@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -21,17 +21,13 @@ const getAuthHeader = (data) => {
 };
 
 const HomePage = () => {
-  const [isSpinner, setIsSpinner] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { logout, user } = useContext(AuthContext);
 
-  // eslint-disable-next-line
-  // debugger;
   useEffect(() => {
     const fetchData = async () => {
-      setIsSpinner(true);
       if (!user) {
         navigate(api.login(), { replace: false });
         return;
@@ -41,12 +37,12 @@ const HomePage = () => {
           headers: getAuthHeader(user),
         };
         const {
-          data: { channels, messages },
+          data: { channels, messages, currentChannelId },
         } = await axios.get(api.dataPath(), userData);
-        setIsSpinner(false);
-        // eslint-disable-next-line
-        //debugger;
+        //  eslint-disable-next-line
+        debugger;
         dispatch(channelsActions.addManyChannels(channels));
+        dispatch(channelsActions.setCurrentChannelId(currentChannelId));
         dispatch(messagesActions.addManyMessages(messages));
       } catch (error) {
         if (error.isAxiosError && error.response.status === 401) {
@@ -63,21 +59,14 @@ const HomePage = () => {
   return (
     <Container className="container h-100 my-4 overflow-hidden rounded shadow">
       <ShowModal />
-      <Row className="row h-100 bg-white flex-md-row">
+      <Row className="h-100 flex-md-row bg-white">
         <Channels />
         <Col className="p-0">
-          {isSpinner ? (
-            <div className="text-center">
-              <Spinner animation="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </div>
-          ) : (
-            <Messages />
-          )}
+          <Messages />
         </Col>
       </Row>
     </Container>
   );
 };
+
 export default HomePage;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+
 import notFound404 from '../images/notFound404.jpg';
 import api from '../routes/api';
 
