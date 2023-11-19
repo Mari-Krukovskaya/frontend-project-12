@@ -63,10 +63,10 @@ const RenameModalChannel = () => {
         debugger;
         formik.setSubmitting(false);
 
-        // if (error.isAxiosError && error.response.status === 401) {
-        //   inputRef.current.select();
-        //   return;
-        // }
+        if (error.isAxiosError && error.response.status === 401) {
+          inputRef.current.select();
+          return;
+        }
         toast.error(t('toasts.connectError'));
       }
     },

@@ -18,7 +18,7 @@ const SignUpForm = () => {
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  const validationSchema = yup.object().shape({
+  const validScema = yup.object().shape({
     username: yup
       .string()
       .required(t('signUp.validSignUp.required'))
@@ -39,18 +39,19 @@ const SignUpForm = () => {
 
   useEffect(() => {
     inputRef.current.focus();
-  }, [authError]);
+  }, []);
 
   const formik = useFormik({
-    validateOnChange: false,
-    validateOnBlur: false,
-    validationSchema,
     initialValues: {
       username: '',
       password: '',
       confirmPassword: '',
     },
+    validationSchema: validScema,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: async (values) => {
+      formik.setSubmitting(true);
       setAuthError(false);
       try {
         const { data } = await axios.post(api.signUpPath(), {
@@ -73,10 +74,6 @@ const SignUpForm = () => {
     },
   });
 
-  const isInvalidUsername = formik.touched.username && !!formik.errors.username;
-  const isInvalidPassword = formik.touched.password && !!formik.errors.password;
-  const isInvalidPassConfirm = formik.touched.confirmPassword && !!formik.errors.confirmPassword;
-
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
@@ -93,9 +90,10 @@ const SignUpForm = () => {
                 />
               </div>
               <Form onSubmit={formik.handleSubmit} className="w-50">
-                <h1 className="text-center mb-4">{t('signUp.registration')}</h1>
-                <fieldset disabled={formik.isSubmitting}>
-                  <Form.Group className="form-floating mb-3">
+                  <h1 className="text-center mb-4">
+                    {t('signUp.registration')}
+                  </h1>
+                  <Form.Floating className="form-floating mb-3">
                     <Form.Control
                       type="text"
                       name="username"
@@ -107,7 +105,7 @@ const SignUpForm = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       ref={inputRef}
-                      isInvalid={authError || isInvalidUsername}
+                      isInvalid={(formik.touched.username && formik.errors.username) || authError}
                     />
                     <Form.Label htmlFor="username">
                       {t('signUp.username')}
@@ -117,10 +115,10 @@ const SignUpForm = () => {
                       tooltip
                       placement="right"
                     >
-                      {t(formik.errors.username)}
+                      {formik.errors.username}
                     </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group className="form-floating mb-3">
+                  </Form.Floating>
+                  <Form.Floating className="form-floating mb-3">
                     <Form.Control
                       type="password"
                       placeholder={t('signUp.validSignUp.passwordMin')}
@@ -132,16 +130,16 @@ const SignUpForm = () => {
                       value={formik.values.password}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      isInvalid={authError || isInvalidPassword}
+                      isInvalid={(formik.touched.password && formik.errors.password) || authError}
                     />
                     <Form.Label htmlFor="password">
                       {t('signUp.password')}
                     </Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>
-                      {t(formik.errors.password)}
+                      {formik.errors.password}
                     </Form.Control.Feedback>
-                  </Form.Group>
-                  <Form.Group className="form-floating mb-4">
+                  </Form.Floating>
+                  <Form.Floating className="form-floating mb-4">
                     <Form.Control
                       type="password"
                       placeholder={t('signUp.confirmPassword')}
@@ -152,15 +150,16 @@ const SignUpForm = () => {
                       value={formik.values.confirmPassword}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      isInvalid={authError || isInvalidPassConfirm}
+                      isInvalid={(formik.touched.confirmPassword && formik.errors.confirmPassword)
+                      || authError}
                     />
                     <Form.Label htmlFor="confirmPassword">
                       {t('signUp.validSignUp.confirmPassword')}
                     </Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>
-                {t(formik.errors.confirmPassword) || t('signUp.validSignUp.alreadyExists')}
+                      {authError === false ? formik.errors.confirmPassword : t('signUp.validSignUp.alreadyExists')}
                     </Form.Control.Feedback>
-                  </Form.Group>
+                  </Form.Floating>
                   <Button
                     className="w-100"
                     type="submit"
@@ -168,7 +167,6 @@ const SignUpForm = () => {
                   >
                     {t('signUp.buttonRegister')}
                   </Button>
-                </fieldset>
               </Form>
             </div>
           </div>
