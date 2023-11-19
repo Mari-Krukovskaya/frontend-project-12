@@ -99,7 +99,8 @@ const SignUpForm = () => {
                       name="username"
                       id="username"
                       value={formik.values.username}
-                      placeholder={t('signUp.validSignUp.usernameMinMax')}
+                      // placeholder={t('signUp.validSignUp.usernameMinMax')}
+                      placeholder="Имя пользователя"
                       autoComplete="username"
                       required
                       onChange={formik.handleChange}
@@ -121,7 +122,8 @@ const SignUpForm = () => {
                   <Form.Floating className="form-floating mb-3">
                     <Form.Control
                       type="password"
-                      placeholder={t('signUp.validSignUp.passwordMin')}
+                      // placeholder={t('signUp.validSignUp.passwordMin')}
+                      placeholder="Пароль"
                       name="password"
                       id="password"
                       required
@@ -142,7 +144,8 @@ const SignUpForm = () => {
                   <Form.Floating className="mb-4">
                     <Form.Control
                       type="password"
-                      placeholder={t('signUp.confirmPassword')}
+                      // placeholder={t('signUp.confirmPassword')}
+                      placeholder="Подтвердите пароль"
                       name="confirmPassword"
                       required
                       id="confirmPassword"
