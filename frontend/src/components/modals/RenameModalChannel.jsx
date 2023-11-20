@@ -27,7 +27,7 @@ const RenameModalChannel = () => {
   const channelNames = channels.map((channelName) => channelName.name);
 
   useEffect(() => {
-    inputRef.current.focus();
+    // inputRef.current.focus();
     inputRef.current.select();
   }, []);
 
@@ -47,6 +47,7 @@ const RenameModalChannel = () => {
     },
     validationSchema: validSchema,
     onSubmit: async (values) => {
+      formik.setSubmitting(true);
       const newName = filter.clean(values.name);
       const data = {
         id: currentChannel.id,
@@ -85,29 +86,26 @@ const RenameModalChannel = () => {
               type="text"
               id="name"
               required
-              disabled={formik.isSubmitting}
+              // disabled={formik.isSubmitting}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              // onBlur={formik.handleBlur}
               value={formik.values.name}
               ref={inputRef}
               className="mb-2"
-              isInvalid={formik.errors.name && formik.touched.name}
+              isInvalid={!!formik.errors.name}
             />
-            <Form.Label visuallyHidden>{t('modal.renameModalChannel')}</Form.Label>
+            <Form.Label className="visually-hidden" htmlFor="name">{t('modal.renameModalChannel')}</Form.Label>
             <Form.Control.Feedback type="invalid">
               {formik.errors.name}
             </Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex justify-content-end">
-            <Button className="btn btn-primary me-2 mt-2" variant="secondary" type="button" onClick={handleClose}>
+            <Button className="me-2" variant="secondary" type="button" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
             <Button
-              className="btn btn-primary mt-2"
               variant="primary"
               type="submit"
-              // disabled={formik.isSubmitting}
-              // onClick={formik.handleSubmit}
             >
               {t('modal.buttonCreate')}
             </Button>

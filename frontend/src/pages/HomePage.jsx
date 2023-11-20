@@ -58,13 +58,13 @@ const HomePage = () => {
 
   return (
     <Container className="container h-100 my-4 overflow-hidden rounded shadow">
-      <ShowModal />
-      <Row className="h-100 flex-md-row bg-white">
-        <Channels />
-        <Col className="p-0">
-          <Messages />
-        </Col>
-      </Row>
+    <ShowModal />
+    <Row className="h-100 flex-md-row bg-white">
+      <Channels />
+      <Col className="p-0">
+        <Messages />
+      </Col>
+    </Row>
     </Container>
   );
 };

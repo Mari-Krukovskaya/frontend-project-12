@@ -40,6 +40,7 @@ const AddModalChannel = () => {
         (value) => !isProfanity(value),
       ),
   });
+
   const handleClose = () => {
     dispatch(modalsActions.isClose());
   };
@@ -54,14 +55,12 @@ const AddModalChannel = () => {
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
-      // eslint-disable-next-line
-      //debugger;
+      formik.setSubmitting(true);
       const filterName = filter.clean(values.name);
       try {
         const { id } = await wsocket.emitAddChannel(filterName);
         store.dispatch(channelsActions.setCurrentChannelId({ id }));
         toast.success(t('toasts.createChannel'));
-        formik.setSubmitting(true);
         handleClose();
       } catch (error) {
         formik.setSubmitting(false);
@@ -82,7 +81,7 @@ const AddModalChannel = () => {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
-          <Form.Group controlId="name">
+          <Form.Group>
             <Form.Control
               name="name"
               required
@@ -91,24 +90,29 @@ const AddModalChannel = () => {
               value={formik.values.name}
               ref={inputRef}
               className="mb-2"
-              // autoFocus
+              autoFocus
               isInvalid={!!formik.errors.name}
               disabled={formik.isSubmitting}
             />
-            <Form.Label htmlFor="name" visuallyHidden>{t('modal.nameChannel')}</Form.Label>
+            <Form.Label htmlFor="name" visuallyHidden>
+              {t('modal.nameChannel')}
+            </Form.Label>
             <Form.Control.Feedback type="invalid">
               {formik.errors.name}
             </Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex justify-content-end">
-            <Button variant="secondary" className="btn btn-primary me-2 mt-2" type="button" onClick={handleClose}>
+            <Button
+              variant="secondary"
+              className="me-2"
+              type="button"
+              onClick={handleClose}
+            >
               {t('modal.buttonCancel')}
             </Button>
             <Button
-              className="btn btn-primary mt-2"
               variant="primary"
               type="submit"
-              // onClick={formik.handleSubmit}
             >
               {t('modal.buttonCreate')}
             </Button>

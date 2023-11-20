@@ -31,9 +31,10 @@ const Messages = () => {
   );
   // eslint-disable-next-line
   //debugger;
+
   useEffect(() => {
     refInput.current.focus();
-  }, [currentId, filteredMessages]);
+  }, [currentChannel]);
 
   useEffect(() => {
     msgRefInput.current?.scrollIntoView();
@@ -49,9 +50,7 @@ const Messages = () => {
     },
     validationSchema: validSchema,
     // validateOnBlur: false,
-    onSubmit: async (values) => {
-      // eslint-disable-next-line
-      // debugger;
+    onSubmit: (values) => {
       formik.setSubmitting(true);
       const filterBody = filter.clean(values.body);
       const message = {
@@ -60,7 +59,7 @@ const Messages = () => {
         username: user.username,
       };
       try {
-        await socket.emitNewMessage(message);
+        socket.emitNewMessage(message);
         formik.resetForm();
       } catch (error) {
         toast.error(`${t('toasts.connectError')}`);
@@ -74,7 +73,8 @@ const Messages = () => {
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              <b>{`# ${currentChannel?.name || ''}`}</b>
+              {/* <b>{`# ${currentChannel?.name || ''}`}</b> */}
+              <b>{currentChannel && `# ${currentChannel?.name}`}</b>
             </p>
             <span className="text-muted">
               {t('messages.counter.count', { count: filteredMessages.length })}
@@ -113,7 +113,7 @@ const Messages = () => {
           <div className="mt-auto px-5 py-3">
             <Form
               onSubmit={formik.handleSubmit}
-              noValidate
+              // noValidate
               className="py-1 border rounded-2"
             >
               <InputGroup className="input-group has-validation">
@@ -134,7 +134,6 @@ const Messages = () => {
                 <Button
                   type="submit"
                   variant="group-vertical"
-                  // disabled={formik.isValidating}
                   disabled={isButtonDisable}
                 >
                   <svg

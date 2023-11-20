@@ -9,7 +9,7 @@ const WSocketProvider = ({ socket, children }) => {
   const emitNewMessage = (message) =>
     new Promise((resolve, reject) => {
       socket
-        .timeout(1000)
+        .timeout(5000)
         .emit('newMessage', message, (error, response) =>
           response?.status === 'ok' ? resolve(response.data) : reject(error)
         );
@@ -17,7 +17,7 @@ const WSocketProvider = ({ socket, children }) => {
 
   const emitAddChannel = (name) =>
     new Promise((resolve, reject) => {
-      socket.timeout(1000).emit('newChannel', { name }, (error, response) => {
+      socket.timeout(5000).emit('newChannel', { name }, (error, response) => {
         if (error) {
           reject(error);
         }
@@ -28,7 +28,7 @@ const WSocketProvider = ({ socket, children }) => {
   const emitRemoveChannel = (id) =>
     new Promise((resolve, reject) => {
       socket
-        .timeout(1000)
+        .timeout(5000)
         .emit('removeChannel', { id }, (error, response) =>
           response?.status === 'ok' ? resolve(response.data) : reject(error)
         );
@@ -37,7 +37,7 @@ const WSocketProvider = ({ socket, children }) => {
   const emitRenameChannel = (id, name) =>
     new Promise((resolve, reject) => {
       socket
-        .timeout(1000)
+        .timeout(5000)
         .emit('renameChannel', { id, name }, (error, response) =>
           response?.status === 'ok' ? resolve(response?.data) : reject(error)
         );
