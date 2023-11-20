@@ -10,10 +10,7 @@ import { toast } from 'react-toastify';
 
 import { useWSocket } from '../../contexts/SocketContext';
 import { modalsActions } from '../../slices/index.js';
-import {
-  selectors,
-  // selectCurrentChannel,
-} from '../../slices/channelsSelectors.js';
+import { selectors } from '../../slices/channelsSelectors.js';
 
 const RenameModalChannel = () => {
   const { t } = useTranslation();
@@ -27,7 +24,7 @@ const RenameModalChannel = () => {
   const channelNames = channels.map((channelName) => channelName.name);
 
   useEffect(() => {
-    // inputRef.current.focus();
+    inputRef.current.focus();
     inputRef.current.select();
   }, []);
 
@@ -35,7 +32,6 @@ const RenameModalChannel = () => {
 
   const validSchema = Yup.object().shape({
     name: Yup.string()
-      .required(t('modal.validChannel.required'))
       .min(3, t('modal.validChannel.nameMinMax'))
       .max(20, t('modal.validChannel.nameMinMax'))
       .notOneOf(channelNames, t('modal.validChannel.uniq')),
@@ -47,15 +43,12 @@ const RenameModalChannel = () => {
     },
     validationSchema: validSchema,
     onSubmit: async (values) => {
+      // eslint-disable-next-line
+      // debugger;
       formik.setSubmitting(true);
       const newName = filter.clean(values.name);
-      const data = {
-        id: currentChannel.id,
-        name: newName,
-        removable: currentChannel.removable,
-      };
       try {
-        await wsocket.emitRenameChannel(data);
+        await wsocket.emitRenameChannel(channelId, newName);
         formik.resetForm();
         toast.success(t('toasts.renameChanel'));
         handleClose();
@@ -63,11 +56,6 @@ const RenameModalChannel = () => {
         // eslint-disable-next-line
         debugger;
         formik.setSubmitting(false);
-
-        if (error.isAxiosError && error.response.status === 401) {
-          inputRef.current.select();
-          return;
-        }
         toast.error(t('toasts.connectError'));
       }
     },
@@ -86,9 +74,7 @@ const RenameModalChannel = () => {
               type="text"
               id="name"
               required
-              // disabled={formik.isSubmitting}
               onChange={formik.handleChange}
-              // onBlur={formik.handleBlur}
               value={formik.values.name}
               ref={inputRef}
               className="mb-2"

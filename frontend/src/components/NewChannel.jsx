@@ -12,28 +12,29 @@ const NewChannel = ({
 }) => {
   const { t } = useTranslation();
   const currentChannelId = useSelector(selectCurrentChannel);
-  const variant = channel.id === currentChannelId ? 'secondary' : 'default';
-
+  const variant = channel.id === currentChannelId ? 'secondary' : null;
+  // eslint-disable-next-line
+  // debugger;
   return (
     <Dropdown as={ButtonGroup} className="d-flex">
       <Button
         variant={variant}
         key={channel.id}
-        onClick={handleCurrentChannel}
+        onClick={() => handleCurrentChannel(channel.id)}
         type="button"
-        className="w-100 rounded-0 text-start text-truncate"
+        className="w-100 rounded-0 text-start btn text-truncate"
       >
         <span className="me-1">#</span>
         {channel.name}
       </Button>
-      <Dropdown.Toggle split variant={variant} className="flex-grow-0">
+      <Dropdown.Toggle split id="dropdown-split-basic" variant={variant} className="flex-grow-0">
         <span className="visually-hidden">{t('modal.channelControl')}</span>
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Item href="#" onClick={handleRemoveChannel}>
+        <Dropdown.Item href="#" onClick={() => handleRemoveChannel(channel.id)}>
           {t('modal.removeModalChannel')}
         </Dropdown.Item>
-        <Dropdown.Item href="#" onClick={handleRenameChannel}>
+        <Dropdown.Item href="#" onClick={() => handleRenameChannel(channel.id)}>
           {t('modal.renameModalChannel')}
         </Dropdown.Item>
       </Dropdown.Menu>

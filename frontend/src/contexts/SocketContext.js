@@ -42,7 +42,6 @@ const WSocketProvider = ({ socket, children }) => {
           response?.status === 'ok' ? resolve(response?.data) : reject(error)
         );
     });
-
   return (
     <WSocketContext.Provider
       value={{

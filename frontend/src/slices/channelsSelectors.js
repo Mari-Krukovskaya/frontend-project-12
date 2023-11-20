@@ -4,6 +4,7 @@ import { channelsAdapter } from './channelsSlice.js';
 export const selectors = channelsAdapter.getSelectors(
   (state) => state.channels,
 );
+
 export const selectCurrentId = (state) => state.channels.currentChannelId;
 
 export const channelState = (state) => state.channels;

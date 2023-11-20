@@ -39,8 +39,6 @@ const HomePage = () => {
         const {
           data: { channels, messages, currentChannelId },
         } = await axios.get(api.dataPath(), userData);
-        //  eslint-disable-next-line
-        debugger;
         dispatch(channelsActions.addManyChannels(channels));
         dispatch(channelsActions.setCurrentChannelId(currentChannelId));
         dispatch(messagesActions.addManyMessages(messages));
@@ -59,7 +57,7 @@ const HomePage = () => {
   return (
     <Container className="container h-100 my-4 overflow-hidden rounded shadow">
     <ShowModal />
-    <Row className="h-100 flex-md-row bg-white">
+    <Row className="row h-100 bg-white flex-md-row">
       <Channels />
       <Col className="p-0">
         <Messages />

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Col } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -13,11 +13,13 @@ import store from '../slices/store.js';
 
 const DefaultChannel = ({ channel, handleCurrentChannel }) => {
   const currentChannelId = useSelector(selectCurrentChannelId);
+  // eslint-disable-next-line
+  // debugger;
   return (
     <Button
       type="button"
-      variant={channel.id === currentChannelId ? 'secondary' : 'default'}
-      className="w-100 rounded-0 text-start"
+      variant={channel.id === currentChannelId ? 'secondary' : null}
+      className="w-100 rounded-0 text-start btn"
       onClick={() => handleCurrentChannel(channel.id)}
     >
       <span className="me-1">#</span>
@@ -53,7 +55,7 @@ const Channels = () => {
   };
 
   return (
-    <Col className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
+    <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
       <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
         <b>{t('modal.channels')}</b>
         <Button
@@ -81,15 +83,15 @@ const Channels = () => {
             ) : (
               <NewChannel
                 channel={channel}
-                handleCurrentChannel={() => handleCurrentChannel(channel.id)}
-                handleRemoveChannel={() => handleRemoveChannel(channel.id)}
-                handleRenameChannel={() => handleRenameChannel(channel.id)}
+                handleCurrentChannel={handleCurrentChannel}
+                handleRemoveChannel={handleRemoveChannel}
+                handleRenameChannel={handleRenameChannel}
               />
             )}
           </li>
         ))}
       </ul>
-    </Col>
+    </div>
   );
 };
 
