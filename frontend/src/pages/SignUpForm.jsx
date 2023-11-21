@@ -80,8 +80,6 @@ const SignUpForm = () => {
               <div>
                 <Image
                   src={signUp}
-                  width={250}
-                  height={250}
                   roundedCircle
                   alt={t('signUp.registration')}
                 />

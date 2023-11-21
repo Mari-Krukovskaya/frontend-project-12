@@ -12,7 +12,6 @@ import { messagesSelectors } from '../slices/messagesSlice.js';
 import {
   selectCurrentChannelId,
   selectors,
-  // selectCurrentChannel,
 } from '../slices/channelsSelectors.js';
 
 const Messages = () => {
@@ -69,11 +68,10 @@ const Messages = () => {
   });
   const isButtonDisable = formik.isSubmitting || formik.values.body.trim() === '';
   return (
-      <div className="col p-0 h-100">
+  // <Col className="p-0 h-100">
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
-              {/* <b>{`# ${currentChannel?.name || ''}`}</b> */}
               <b>{currentChannel && `# ${currentChannel?.name}`}</b>
             </p>
             <span className="text-muted">
@@ -113,7 +111,7 @@ const Messages = () => {
           <div className="mt-auto px-5 py-3">
             <Form
               onSubmit={formik.handleSubmit}
-              // noValidate
+              noValidate
               className="py-1 border rounded-2"
             >
               <InputGroup className="input-group has-validation">
@@ -156,7 +154,7 @@ const Messages = () => {
             </Form>
           </div>
         </div>
-      </div>
+  // </Col>
   );
 };
 export default Messages;

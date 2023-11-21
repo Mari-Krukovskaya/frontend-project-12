@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col } from 'react-bootstrap';
+// import { Container, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -55,15 +55,15 @@ const HomePage = () => {
   }, [dispatch, logout, user, navigate, t]);
 
   return (
-    <Container className="container h-100 my-4 overflow-hidden rounded shadow">
-    <ShowModal />
-    <Row className="row h-100 bg-white flex-md-row">
+    <div className="container h-100 my-4 overflow-hidden rounded shadow">
+    <div className="row h-100 bg-white flex-md-row">
       <Channels />
-      <Col className="p-0">
+      <div className="col p-0 h-100">
         <Messages />
-      </Col>
-    </Row>
-    </Container>
+      </div>
+    </div>
+    <ShowModal />
+    </div>
   );
 };
 

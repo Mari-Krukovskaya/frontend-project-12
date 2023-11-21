@@ -132,6 +132,7 @@ const Login = () => {
             <Card.Footer className="card-footer p-4">
               <div className="text-center">
                 <span>{t('authForm.noAcc')}</span>
+                {' '}
                 <Link to={api.signUp()}>{t('authForm.signUp')}</Link>
               </div>
             </Card.Footer>
