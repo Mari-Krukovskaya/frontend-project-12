@@ -19,7 +19,7 @@ export default {
     },
     signUp: {
       registration: 'Регистрация',
-      username: 'Имя Пользователя',
+      username: 'Имя пользователя',
       password: 'Пароль',
       confirmPassword: 'Подтвердитe пароль',
       buttonRegister: 'Зарегистрироваться',
