@@ -9,10 +9,10 @@ import api from '../routes/api';
 const Nav = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const handleBtnClick = () => {
-    if (auth.user) {
-      auth.logout();
+    if (user) {
+      logout();
     }
     navigate(api.login());
   };
@@ -26,7 +26,7 @@ const Nav = () => {
           </Navbar.Brand>
           <Navbar.Collapse className="justify-content-end" />
 
-          {auth.user ? (
+          {user ? (
             <Button onClick={handleBtnClick}>{t('nav.exit')}</Button>
           ) : (
             null

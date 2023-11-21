@@ -13,8 +13,7 @@ const NewChannel = ({
   const { t } = useTranslation();
   const currentChannelId = useSelector(selectCurrentChannel);
   const variant = channel.id === currentChannelId ? 'secondary' : null;
-  // eslint-disable-next-line
-  // debugger;
+
   return (
     <Dropdown as={ButtonGroup} className="d-flex">
       <Button
@@ -31,10 +30,10 @@ const NewChannel = ({
         <span className="visually-hidden">{t('modal.channelControl')}</span>
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Item href="#" onClick={() => handleRemoveChannel(channel.id)}>
+        <Dropdown.Item onClick={() => handleRemoveChannel(channel.id)}>
           {t('modal.removeModalChannel')}
         </Dropdown.Item>
-        <Dropdown.Item href="#" onClick={() => handleRenameChannel(channel.id)}>
+        <Dropdown.Item onClick={() => handleRenameChannel(channel.id)}>
           {t('modal.renameModalChannel')}
         </Dropdown.Item>
       </Dropdown.Menu>

@@ -18,7 +18,7 @@ const Messages = () => {
   const { t } = useTranslation();
   const refInput = useRef(null);
   const msgRefInput = useRef(null);
-  const socket = useWSocket();
+  const { emitNewMessage } = useWSocket();
   const { user } = useContext(AuthContext);
   const channels = useSelector(selectors.selectAll);
   const currentId = useSelector(selectCurrentChannelId);
@@ -28,8 +28,6 @@ const Messages = () => {
   const filteredMessages = messages.filter(
     (msg) => msg.channelId === currentId,
   );
-  // eslint-disable-next-line
-  //debugger;
 
   useEffect(() => {
     refInput.current.focus();
@@ -48,7 +46,7 @@ const Messages = () => {
       body: '',
     },
     validationSchema: validSchema,
-    // validateOnBlur: false,
+    validateOnBlur: false,
     onSubmit: (values) => {
       formik.setSubmitting(true);
       const filterBody = filter.clean(values.body);
@@ -58,7 +56,7 @@ const Messages = () => {
         username: user.username,
       };
       try {
-        socket.emitNewMessage(message);
+        emitNewMessage(message);
         formik.resetForm();
       } catch (error) {
         toast.error(`${t('toasts.connectError')}`);
@@ -68,7 +66,6 @@ const Messages = () => {
   });
   const isButtonDisable = formik.isSubmitting || formik.values.body.trim() === '';
   return (
-  // <Col className="p-0 h-100">
         <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
@@ -126,7 +123,6 @@ const Messages = () => {
                   ref={refInput}
                   onBlur={formik.handleBlur}
                   placeholder={t('messages.messagePlaceholder')}
-                  // autoComplete="off"
                   disabled={formik.isSubmitting}
                 />
                 <Button
@@ -154,7 +150,6 @@ const Messages = () => {
             </Form>
           </div>
         </div>
-  // </Col>
   );
 };
 export default Messages;

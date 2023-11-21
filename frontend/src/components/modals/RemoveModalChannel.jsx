@@ -12,7 +12,7 @@ const defaultChannel = 1;
 
 const RemoveModalChannel = () => {
   const { t } = useTranslation();
-  const wsocket = useWSocket();
+  const { emitRemoveChannel } = useWSocket();
   const dispatch = useDispatch();
 
   const channelId = useSelector((state) => state.modal.channelId);
@@ -22,7 +22,7 @@ const RemoveModalChannel = () => {
 
   const handleDeleteClick = async () => {
     try {
-      await wsocket.emitRemoveChannel(channelId);
+      await emitRemoveChannel(channelId);
       handleClose();
       if (channelId === currentId) {
         dispatch(channelsActions.setCurrentChannelId(defaultChannel));

@@ -13,8 +13,6 @@ import store from '../slices/store.js';
 
 const DefaultChannel = ({ channel, handleCurrentChannel }) => {
   const currentChannelId = useSelector(selectCurrentChannelId);
-  // eslint-disable-next-line
-  // debugger;
   return (
     <Button
       type="button"

@@ -10,8 +10,6 @@ import { toast } from 'react-toastify';
 import { modalsActions } from '../../slices/index.js';
 import { useWSocket } from '../../contexts/SocketContext.js';
 import { selectors } from '../../slices/channelsSelectors.js';
-import { actions as channelsActions } from '../../slices/channelsSlice.js';
-import store from '../../slices/store.js';
 
 const isProfanity = (value) => {
   const cleanValue = filter.clean(value);
@@ -21,12 +19,11 @@ const isProfanity = (value) => {
 const AddModalChannel = () => {
   const { t } = useTranslation();
   const inputRef = useRef(null);
-  const wsocket = useWSocket();
+  const { emitAddChannel } = useWSocket();
   const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
   const channelsNames = channels.map((channelName) => channelName.name);
-  // eslint-disable-next-line
-  //debugger
+
   const validSchema = yup.object().shape({
     name: yup
       .string()
@@ -58,17 +55,11 @@ const AddModalChannel = () => {
       formik.setSubmitting(true);
       const filterName = filter.clean(values.name);
       try {
-        const { id } = await wsocket.emitAddChannel(filterName);
-        store.dispatch(channelsActions.setCurrentChannelId({ id }));
+        await emitAddChannel(filterName);
         toast.success(t('toasts.createChannel'));
         handleClose();
       } catch (error) {
         formik.setSubmitting(false);
-        if (error.isAxiosError && error.response.status === 401) {
-          inputRef.current.select();
-
-          return;
-        }
         toast.error(t('toasts.connectError'));
       }
     },

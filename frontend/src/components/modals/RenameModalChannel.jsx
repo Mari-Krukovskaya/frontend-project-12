@@ -15,7 +15,7 @@ import { selectors } from '../../slices/channelsSelectors.js';
 const RenameModalChannel = () => {
   const { t } = useTranslation();
   const inputRef = useRef(null);
-  const wsocket = useWSocket();
+  const { emitRenameChannel } = useWSocket();
   const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
   const { channelId } = useSelector((state) => state.modal);
@@ -43,18 +43,14 @@ const RenameModalChannel = () => {
     },
     validationSchema: validSchema,
     onSubmit: async (values) => {
-      // eslint-disable-next-line
-      // debugger;
       formik.setSubmitting(true);
       const newName = filter.clean(values.name);
       try {
-        await wsocket.emitRenameChannel(channelId, newName);
+        await emitRenameChannel(channelId, newName);
         formik.resetForm();
         toast.success(t('toasts.renameChanel'));
         handleClose();
       } catch (error) {
-        // eslint-disable-next-line
-        debugger;
         formik.setSubmitting(false);
         toast.error(t('toasts.connectError'));
       }
