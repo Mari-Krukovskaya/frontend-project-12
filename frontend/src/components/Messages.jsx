@@ -80,7 +80,7 @@ const Messages = () => {
               key={message.id}
               className="text-break mb-2"
             >
-             <b>{message.username}</b>
+              <b>{message.username}</b>
               :
               {' '}
               {message.body}
