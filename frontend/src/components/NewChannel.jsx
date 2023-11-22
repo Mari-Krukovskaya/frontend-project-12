@@ -31,10 +31,10 @@ const NewChannel = ({
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item onClick={() => handleRemoveChannel(channel.id)}>
-          {t('modal.removeModalChannel')}
+          {t('modal.removeChannel')}
         </Dropdown.Item>
         <Dropdown.Item onClick={() => handleRenameChannel(channel.id)}>
-          {t('modal.renameModalChannel')}
+          {t('modal.renameChannel')}
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>

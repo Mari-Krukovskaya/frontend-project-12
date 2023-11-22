@@ -36,7 +36,9 @@ export default {
       channelControl: 'Управление каналом',
       addModalChannel: 'Добавить канал',
       removeModalChannel: 'Удалить канал',
+      removeChannel: 'Удалить',
       renameModalChannel: 'Переименовать канал',
+      renameChannel: 'Переименовать',
       validChannel: {
         required: 'Обязательное поле',
         nameMinMax: 'От 3 до 20 символов',
