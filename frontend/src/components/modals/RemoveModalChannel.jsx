@@ -41,9 +41,9 @@ const RemoveModalChannel = () => {
       <Modal.Body>
         <p className="lead">{t('modal.areYouSure')}</p>
         <div className="d-flex justify-content-end">
-        <Button type="button" variant="secondary" className="me-2" onClick={handleClose}>
+          <Button type="button" variant="secondary" className="me-2" onClick={handleClose}>
           {t('modal.buttonCancel')}
-        </Button>
+          </Button>
         <Button type="submit" variant="danger" onClick={handleDeleteClick}>
           {t('modal.delete')}
         </Button>

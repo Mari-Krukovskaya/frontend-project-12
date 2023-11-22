@@ -65,14 +65,14 @@ const Messages = () => {
   const isButtonDisable = formik.isSubmitting || formik.values.body.trim() === '';
   return (
     <div className="d-flex flex-column h-100">
-          <div className="bg-light mb-4 p-3 shadow-sm small">
+      <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
               <b>{currentChannel && `# ${currentChannel?.name}`}</b>
             </p>
             <span className="text-muted">
               {t('messages.counter.count', { count: filteredMessages.length })}
             </span>
-          </div>
+      </div>
           <div id="messages-box" className="chat-messages overflow-auto px-5" ref={msgRefInput}>
             {filteredMessages.map((message) => (
               message.username === user.username ? (
@@ -103,7 +103,7 @@ const Messages = () => {
               )
             ))}
           </div>
-          <div className="mt-auto px-5 py-3">
+      <div className="mt-auto px-5 py-3">
             <Form
               onSubmit={formik.handleSubmit}
               noValidate
@@ -146,7 +146,7 @@ const Messages = () => {
                 </Button>
               </InputGroup>
             </Form>
-          </div>
+      </div>
     </div>
   );
 };
