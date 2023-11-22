@@ -79,18 +79,18 @@ const RenameModalChannel = () => {
               />
               <Form.Label htmlFor="name" visuallyHidden>{t('modal.nameChannel')}</Form.Label>
               <Form.Control.Feedback type="invalid">
-              {t(formik.errors.name)}
+                {t(formik.errors.name)}
               </Form.Control.Feedback>
             </Form.Group>
             <div className="d-flex justify-content-end">
               <Button className="me-2" variant="secondary" type="button" onClick={handleClose}>
-              {t('modal.buttonCancel')}
+                {t('modal.buttonCancel')}
               </Button>
               <Button
                 variant="primary"
                 type="submit"
               >
-              {t('modal.buttonCreate')}
+                {t('modal.buttonCreate')}
               </Button>
             </div>
           </fieldset>

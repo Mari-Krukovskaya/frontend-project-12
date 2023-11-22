@@ -66,14 +66,14 @@ const Messages = () => {
   return (
     <div className="d-flex flex-column h-100">
       <div className="bg-light mb-4 p-3 shadow-sm small">
-            <p className="m-0">
+        <p className="m-0">
               <b>{currentChannel && `# ${currentChannel?.name}`}</b>
-            </p>
-            <span className="text-muted">
-              {t('messages.counter.count', { count: filteredMessages.length })}
-            </span>
+        </p>
+        <span className="text-muted">
+        {t('messages.counter.count', { count: filteredMessages.length })}
+        </span>
       </div>
-          <div id="messages-box" className="chat-messages overflow-auto px-5" ref={msgRefInput}>
+      <div id="messages-box" className="chat-messages overflow-auto px-5" ref={msgRefInput}>
             {filteredMessages.map((message) => (
               message.username === user.username ? (
                 <div
@@ -102,13 +102,13 @@ const Messages = () => {
                 </div>
               )
             ))}
-          </div>
+      </div>
       <div className="mt-auto px-5 py-3">
-            <Form
-              onSubmit={formik.handleSubmit}
-              noValidate
-              className="py-1 border rounded-2"
-            >
+        <Form
+          onSubmit={formik.handleSubmit}
+          noValidate
+          className="py-1 border rounded-2"
+        >
               <InputGroup className="input-group has-validation">
                 <Form.Control
                   type="text"
@@ -145,7 +145,7 @@ const Messages = () => {
                   </span>
                 </Button>
               </InputGroup>
-            </Form>
+        </Form>
       </div>
     </div>
   );
