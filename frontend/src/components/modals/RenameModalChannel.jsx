@@ -14,9 +14,9 @@ import { selectors } from '../../slices/channelsSelectors.js';
 
 const RenameModalChannel = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const inputRef = useRef(null);
   const { emitRenameChannel } = useWSocket();
-  const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
   const { channelId } = useSelector((state) => state.modal);
   const currentChannel = useSelector((state) => selectors.selectById(state, channelId));

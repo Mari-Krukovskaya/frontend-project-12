@@ -10,6 +10,7 @@ const Nav = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
+
   const handleBtnClick = () => {
     if (user) {
       logout();

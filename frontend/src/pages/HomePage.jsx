@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -43,8 +42,6 @@ const HomePage = () => {
         dispatch(channelsActions.setCurrentChannelId(currentChannelId));
         dispatch(messagesActions.addManyMessages(messages));
       } catch (error) {
-        // eslint-disable-next-line
-        debugger
         if (error.isAxiosError && error.response.status === 401) {
           logout();
           navigate(api.login(), { replace: false });

@@ -12,8 +12,8 @@ const defaultChannel = 1;
 
 const RemoveModalChannel = () => {
   const { t } = useTranslation();
-  const { emitRemoveChannel } = useWSocket();
   const dispatch = useDispatch();
+  const { emitRemoveChannel } = useWSocket();
 
   const channelId = useSelector((state) => state.modal.channelId);
   const currentId = useSelector(selectCurrentId);
