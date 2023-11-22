@@ -17,13 +17,12 @@ const RenameModalChannel = () => {
   const inputRef = useRef(null);
   const { emitRenameChannel } = useWSocket();
   const channels = useSelector(selectors.selectAll);
-  const { channelId } = useSelector((state) => state.modal);
+  const { channelId, show } = useSelector((state) => state.modal);
   const currentChannel = useSelector((state) => selectors.selectById(state, channelId));
 
   const channelNames = channels.map((channelName) => channelName.name);
 
   useEffect(() => {
-    inputRef.current.focus();
     inputRef.current.select();
   }, []);
 
@@ -60,7 +59,7 @@ const RenameModalChannel = () => {
   });
 
   return (
-    <Modal show onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.renameModalChannel')}</Modal.Title>
       </Modal.Header>
@@ -70,7 +69,6 @@ const RenameModalChannel = () => {
           <Form.Group>
             <Form.Control
               name="name"
-              type="text"
               id="name"
               className="mb-2"
               onChange={formik.handleChange}

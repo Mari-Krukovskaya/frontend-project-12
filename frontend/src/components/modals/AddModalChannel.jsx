@@ -23,7 +23,7 @@ const AddModalChannel = () => {
   const dispatch = useDispatch();
   const channels = useSelector(selectors.selectAll);
   const channelsNames = channels.map((channelName) => channelName.name);
-
+  const { show } = useSelector((state) => state.modal);
   const validSchema = yup.object().shape({
     name: yup
       .string()
@@ -66,7 +66,7 @@ const AddModalChannel = () => {
   });
 
   return (
-    <Modal show onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.addModalChannel')}</Modal.Title>
       </Modal.Header>

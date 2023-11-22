@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-
+import { Button } from 'react-bootstrap';
 import {
   selectors,
   selectCurrentChannelId,
@@ -13,16 +12,16 @@ import store from '../slices/store.js';
 
 const DefaultChannel = ({ channel, handleCurrentChannel }) => {
   const currentChannelId = useSelector(selectCurrentChannelId);
+  const newClassActive = channel.id === currentChannelId ? 'btn-primary' : '';
   return (
-    <Button
+    <button
       type="button"
-      variant={channel.id === currentChannelId ? 'secondary' : null}
-      className="w-100 rounded-0 text-start btn"
+      className={`w-100 rounded-0 text-start btn ${newClassActive}`}
       onClick={() => handleCurrentChannel(channel.id)}
     >
       <span className="me-1">#</span>
       {channel.name}
-    </Button>
+    </button>
   );
 };
 const Channels = () => {

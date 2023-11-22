@@ -15,7 +15,7 @@ const RemoveModalChannel = () => {
   const dispatch = useDispatch();
   const { emitRemoveChannel } = useWSocket();
 
-  const channelId = useSelector((state) => state.modal.channelId);
+  const { channelId, show } = useSelector((state) => state.modal);
   const currentId = useSelector(selectCurrentId);
 
   const handleClose = () => dispatch(modalsActions.isClose());
@@ -34,7 +34,7 @@ const RemoveModalChannel = () => {
   };
 
   return (
-    <Modal show onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>{t('modal.removeModalChannel')}</Modal.Title>
       </Modal.Header>
