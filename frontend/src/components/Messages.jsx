@@ -67,15 +67,15 @@ const Messages = () => {
     <div className="d-flex flex-column h-100">
       <div className="bg-light mb-4 p-3 shadow-sm small">
         <p className="m-0">
-              <b>{currentChannel && `# ${currentChannel?.name}`}</b>
+          <b>{currentChannel && `# ${currentChannel?.name}`}</b>
         </p>
         <span className="text-muted">
-        {t('messages.counter.count', { count: filteredMessages.length })}
+          {t('messages.counter.count', { count: filteredMessages.length })}
         </span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5" ref={msgRefInput}>
-            {filteredMessages.map((message) => (
-              message.username === user.username ? (
+        {filteredMessages.map((message) => (
+          message.username === user.username ? (
                 <div
                   key={message.id}
                   className="text-break mb-2"
@@ -85,7 +85,7 @@ const Messages = () => {
                   {' '}
                   {message.body}
                 </div>
-              ) : (
+          ) : (
                 <div
                   key={message.id}
                   className="text-break mb-2"
@@ -100,8 +100,8 @@ const Messages = () => {
                     {message.body}
                   </div>
                 </div>
-              )
-            ))}
+          )
+        ))}
       </div>
       <div className="mt-auto px-5 py-3">
         <Form
@@ -109,7 +109,7 @@ const Messages = () => {
           noValidate
           className="py-1 border rounded-2"
         >
-              <InputGroup className="input-group has-validation">
+          <InputGroup className="input-group has-validation">
                 <Form.Control
                   type="text"
                   required
@@ -144,7 +144,7 @@ const Messages = () => {
                     {t('messages.enterMessage')}
                   </span>
                 </Button>
-              </InputGroup>
+          </InputGroup>
         </Form>
       </div>
     </div>

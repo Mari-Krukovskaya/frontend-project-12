@@ -45,7 +45,7 @@ const RemoveModalChannel = () => {
             {t('modal.buttonCancel')}
           </Button>
           <Button type="submit" variant="danger" onClick={handleDeleteClick}>
-          {t('modal.delete')}
+            {t('modal.delete')}
           </Button>
         </div>
       </Modal.Body>
