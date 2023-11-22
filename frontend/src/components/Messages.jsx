@@ -25,9 +25,7 @@ const Messages = () => {
   const currentChannel = channels.find(({ id }) => id === currentId);
   const messages = useSelector(messagesSelectors.selectAll);
 
-  const filteredMessages = messages.filter(
-    (msg) => msg.channelId === currentId,
-  );
+  const filteredMessages = messages.filter((msg) => msg.channelId === currentId);
 
   useEffect(() => {
     refInput.current.focus();
