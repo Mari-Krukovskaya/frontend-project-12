@@ -30,7 +30,8 @@ const RenameModalChannel = () => {
   const handleClose = () => dispatch(modalsActions.isClose());
 
   const validSchema = Yup.object().shape({
-    name: Yup.string()
+    name: Yup.string().trim()
+      .required(t('modal.validChannel.required'))
       .min(3, t('modal.validChannel.nameMinMax'))
       .max(20, t('modal.validChannel.nameMinMax'))
       .notOneOf(channelNames, t('modal.validChannel.uniq')),
@@ -40,6 +41,8 @@ const RenameModalChannel = () => {
     initialValues: {
       name: currentChannel?.name,
     },
+    validateOnChange: false,
+    validateOnBlur: false,
     validationSchema: validSchema,
     onSubmit: async (values) => {
       formik.setSubmitting(true);
@@ -63,21 +66,22 @@ const RenameModalChannel = () => {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
+          <fieldset disabled={formik.isSubmitting}>
           <Form.Group>
             <Form.Control
               name="name"
               type="text"
               id="name"
-              required
+              className="mb-2"
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               value={formik.values.name}
               ref={inputRef}
-              className="mb-2"
-              isInvalid={!!formik.errors.name}
+              isInvalid={formik.errors.name}
             />
-            <Form.Label className="visually-hidden" htmlFor="name">{t('modal.renameModalChannel')}</Form.Label>
+            <Form.Label htmlFor="name" visuallyHidden>{t('modal.renameModalChannel')}</Form.Label>
             <Form.Control.Feedback type="invalid">
-              {formik.errors.name}
+              {t(formik.errors.name)}
             </Form.Control.Feedback>
           </Form.Group>
           <div className="d-flex justify-content-end">
@@ -91,6 +95,7 @@ const RenameModalChannel = () => {
               {t('modal.buttonCreate')}
             </Button>
           </div>
+          </fieldset>
         </Form>
       </Modal.Body>
     </Modal>
