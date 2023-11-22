@@ -66,7 +66,7 @@ const RenameModalChannel = () => {
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
           <fieldset disabled={formik.isSubmitting}>
-          <Form.Group>
+            <Form.Group>
             <Form.Control
               name="name"
               id="name"
@@ -81,8 +81,8 @@ const RenameModalChannel = () => {
             <Form.Control.Feedback type="invalid">
               {t(formik.errors.name)}
             </Form.Control.Feedback>
-          </Form.Group>
-          <div className="d-flex justify-content-end">
+            </Form.Group>
+            <div className="d-flex justify-content-end">
             <Button className="me-2" variant="secondary" type="button" onClick={handleClose}>
               {t('modal.buttonCancel')}
             </Button>
@@ -92,7 +92,7 @@ const RenameModalChannel = () => {
             >
               {t('modal.buttonCreate')}
             </Button>
-          </div>
+            </div>
           </fieldset>
         </Form>
       </Modal.Body>

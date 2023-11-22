@@ -66,7 +66,7 @@ const Messages = () => {
   });
   const isButtonDisable = formik.isSubmitting || formik.values.body.trim() === '';
   return (
-        <div className="d-flex flex-column h-100">
+    <div className="d-flex flex-column h-100">
           <div className="bg-light mb-4 p-3 shadow-sm small">
             <p className="m-0">
               <b>{currentChannel && `# ${currentChannel?.name}`}</b>
@@ -99,7 +99,7 @@ const Messages = () => {
                     </div>
                     :
                     {' '}
-                     {message.body}
+                    {message.body}
                   </div>
                 </div>
               )
@@ -149,7 +149,7 @@ const Messages = () => {
               </InputGroup>
             </Form>
           </div>
-        </div>
+    </div>
   );
 };
 export default Messages;

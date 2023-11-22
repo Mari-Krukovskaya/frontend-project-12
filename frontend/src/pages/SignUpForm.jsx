@@ -101,7 +101,9 @@ const SignUpForm = () => {
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       ref={inputRef}
-                      isInvalid={(formik.touched.username && formik.errors.username) || authError}
+                      isInvalid={
+                        (formik.touched.username && formik.errors.username) || authError
+                      }
                     />
                     <Form.Label htmlFor="username">
                       {t('signUp.username')}
@@ -126,7 +128,9 @@ const SignUpForm = () => {
                       value={formik.values.password}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      isInvalid={(formik.touched.password && formik.errors.password) || authError}
+                      isInvalid={
+                        (formik.touched.password && formik.errors.password) || authError
+                      }
                     />
                     <Form.Label htmlFor="password">
                       {t('signUp.password')}
@@ -146,14 +150,16 @@ const SignUpForm = () => {
                       value={formik.values.confirmPassword}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      isInvalid={(formik.touched.confirmPassword && formik.errors.confirmPassword)
-                      || authError}
+                      isInvalid={
+                        (formik.touched.confirmPassword && formik.errors.confirmPassword)
+                         || authError
+                      }
                     />
                     <Form.Label htmlFor="confirmPassword">
                       {t('signUp.confirmPassword')}
                     </Form.Label>
                     <Form.Control.Feedback type="invalid" tooltip>
-                    {authError === false ? formik.errors.confirmPassword : t('signUp.validSignUp.alreadyExists')}
+                      {authError === false ? formik.errors.confirmPassword : t('signUp.validSignUp.alreadyExists')}
                     </Form.Control.Feedback>
                   </Form.Group>
                   <Button
