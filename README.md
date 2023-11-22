@@ -6,9 +6,6 @@
 ### Project description:
 This project represents a simplified version of Slack where users can register, log in, create channels, and leave messages. The provided code includes components and functionality related to adding channels.
 
-### Website:
-[Slack](https://frontend-project-12-production-402e.up.railway.app/ "Chat Slack")
-
 ### Requirements
  Node.js v13.2.0
 
@@ -22,3 +19,9 @@ git clone
 ```
 make install
 ```
+### запустить сервер разработки
+```
+make start
+```
+### Website:
+[Slack](https://frontend-project-12-production-402e.up.railway.app/ "Chat Slack")
