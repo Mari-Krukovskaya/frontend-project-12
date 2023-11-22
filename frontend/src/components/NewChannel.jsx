@@ -12,7 +12,7 @@ const NewChannel = ({
 }) => {
   const { t } = useTranslation();
   const currentChannelId = useSelector(selectCurrentChannel);
-  const newClassActive = channel.id === currentChannelId ? 'btn-primary' : '';
+  const newClassActive = channel.id === currentChannelId ? 'secondary' : '';
 
   return (
     <Dropdown as={ButtonGroup} className="d-flex">
@@ -26,14 +26,14 @@ const NewChannel = ({
         <span className="me-1">#</span>
         {channel.name}
       </Button>
-      <Dropdown.Toggle split variant={newClassActive} className={`flex-grow-0 ${newClassActive}`}>
+      <Dropdown.Toggle variant={newClassActive} className={`flex-grow-0 ${newClassActive}`} split>
         <span className="visually-hidden">{t('modal.channelControl')}</span>
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        <Dropdown.Item onClick={() => handleRemoveChannel(channel.id)} eventKey="1">
+        <Dropdown.Item onClick={() => handleRemoveChannel(channel.id)}>
           {t('modal.removeChannel')}
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => handleRenameChannel(channel.id)} eventKey="2">
+        <Dropdown.Item onClick={() => handleRenameChannel(channel.id)}>
           {t('modal.renameChannel')}
         </Dropdown.Item>
       </Dropdown.Menu>

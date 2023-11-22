@@ -77,7 +77,7 @@ const RenameModalChannel = () => {
               ref={inputRef}
               isInvalid={formik.errors.name}
             />
-            <Form.Label htmlFor="name" visuallyHidden>{t('modal.renameModalChannel')}</Form.Label>
+            <Form.Label htmlFor="name" visuallyHidden>{t('modal.nameChannel')}</Form.Label>
             <Form.Control.Feedback type="invalid">
               {t(formik.errors.name)}
             </Form.Control.Feedback>
