@@ -32,8 +32,10 @@ const Messages = () => {
   }, [currentChannel]);
 
   useEffect(() => {
-    msgRefInput.current?.scrollIntoView();
-  }, [filteredMessages.length]);
+    if (msgRefInput.current) {
+      msgRefInput.current.scrollTop = msgRefInput.current.scrollHeight;
+    }
+  }, [filteredMessages]);
 
   const validSchema = yup.object().shape({
     body: yup.string().trim().required(),
@@ -62,7 +64,12 @@ const Messages = () => {
       }
     },
   });
-  const isButtonDisable = formik.isSubmitting || formik.values.body.trim() === '';
+  useEffect(() => {
+    if (formik.values.body.trim() === '') {
+      refInput.current.focus();
+    }
+  }, [formik.values.body]);
+
   return (
     <div className="d-flex flex-column h-100">
       <div className="bg-light mb-4 p-3 shadow-sm small">
@@ -79,6 +86,7 @@ const Messages = () => {
             <div
               key={message.id}
               className="text-break mb-2"
+              style={{ backgroundColor: '#2E9AFF' }}
             >
               <b>{message.username}</b>
               :
@@ -126,7 +134,7 @@ const Messages = () => {
             <Button
               type="submit"
               variant="group-vertical"
-              disabled={isButtonDisable}
+              disabled={formik.disabled}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
