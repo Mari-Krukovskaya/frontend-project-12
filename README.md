@@ -1,7 +1,7 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/Mari-Krukovskaya/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/Mari-Krukovskaya/frontend-project-12/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a1c6309007b0c55dcbd5/maintainability)](https://codeclimate.com/github/Mari-Krukovskaya/frontend-project-12/maintainability)
-[![Lint](https://github.com/Mari-Krukovskaya/frontend-project-12/actions/workflows/lint.yaml/badge.svg)](https://github.com/Mari-Krukovskaya/frontend-project-12/actions/workflows/lint.yaml)
+[![Lint](https://github.com/Mari-Krukovskaya/frontend-project-12/actions/workflows/lint.yml/badge.svg)](https://github.com/Mari-Krukovskaya/frontend-project-12/actions/workflows/lint.yml)
 
 ### Project name:
 Chat(Slack)
