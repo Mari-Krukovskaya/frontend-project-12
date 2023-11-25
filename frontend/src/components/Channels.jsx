@@ -34,8 +34,6 @@ const Channels = () => {
   const activeChannelId = useSelector(selectCurrentChannelId);
   const channels = useSelector(selectors.selectAll);
 
-  // channelListRef.current.scrollTop = 0;
-
   useEffect(() => {
     if (channelListRef.current) {
       channelListRef.current.scrollTop = channelListRef.current.scrollHeight;
@@ -86,13 +84,13 @@ const Channels = () => {
       >
   {channels.map((channel) => (
     <li key={channel.id} className="nav-item w-100">
-    {!channel.removable ? (
-      <DefaultChannel
-        key={channel.id}
-        channel={channel}
-        handleCurrentChannel={handleCurrentChannel}
-      />
-    ) : (
+        {!channel.removable ? (
+    <DefaultChannel
+      key={channel.id}
+      channel={channel}
+      handleCurrentChannel={handleCurrentChannel}
+    />
+        ) : (
     <NewChannel
       key={channel.id}
       channel={channel}
@@ -100,7 +98,7 @@ const Channels = () => {
       handleRemoveChannel={handleRemoveChannel}
       handleRenameChannel={handleRenameChannel}
     />
-    )}
+        )}
     </li>
   ))}
       </ul>
