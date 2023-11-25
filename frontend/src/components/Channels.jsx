@@ -1,3 +1,4 @@
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaPlus } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
@@ -12,22 +13,34 @@ import store from '../slices/store.js';
 
 const DefaultChannel = ({ channel, handleCurrentChannel }) => {
   const currentChannelId = useSelector(selectCurrentChannelId);
-  const newClassActive = channel.id === currentChannelId ? 'btn-primary' : '';
+  const isCurrentChannel = currentChannelId === channel.id;
+
   return (
-    <button
+    <Button
       type="button"
-      className={`w-100 rounded-0 text-start btn ${newClassActive}`}
+      className="w-100 rounded-0 text-start btn"
       onClick={() => handleCurrentChannel(channel.id)}
+      variant={isCurrentChannel ? 'primary' : null}
     >
       <span className="me-1">#</span>
       {channel.name}
-    </button>
+    </Button>
   );
 };
 const Channels = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const channelListRef = useRef(null);
+  const activeChannelId = useSelector(selectCurrentChannelId);
   const channels = useSelector(selectors.selectAll);
+
+  // channelListRef.current.scrollTop = 0;
+
+  useEffect(() => {
+    if (channelListRef.current) {
+      channelListRef.current.scrollTop = channelListRef.current.scrollHeight;
+    }
+  }, [activeChannelId]);
 
   const handleAddChannel = () => {
     dispatch(
@@ -67,26 +80,29 @@ const Channels = () => {
         </Button>
       </div>
       <ul
+        ref={channelListRef}
         id="channels-box"
         className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
       >
-        {channels.map((channel) => (
-          <li key={channel.id} className="nav-item w-100">
-            {!channel.removable ? (
-              <DefaultChannel
-                channel={channel}
-                handleCurrentChannel={handleCurrentChannel}
-              />
-            ) : (
-              <NewChannel
-                channel={channel}
-                handleCurrentChannel={handleCurrentChannel}
-                handleRemoveChannel={handleRemoveChannel}
-                handleRenameChannel={handleRenameChannel}
-              />
-            )}
-          </li>
-        ))}
+  {channels.map((channel) => (
+    <li key={channel.id} className="nav-item w-100">
+    {!channel.removable ? (
+      <DefaultChannel
+        key={channel.id}
+        channel={channel}
+        handleCurrentChannel={handleCurrentChannel}
+      />
+    ) : (
+    <NewChannel
+      key={channel.id}
+      channel={channel}
+      handleCurrentChannel={handleCurrentChannel}
+      handleRemoveChannel={handleRemoveChannel}
+      handleRenameChannel={handleRenameChannel}
+    />
+    )}
+    </li>
+  ))}
       </ul>
     </div>
   );
