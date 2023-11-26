@@ -84,21 +84,21 @@ const Channels = () => {
       >
         {channels.map((channel) => (
           <li key={channel.id} className="nav-item w-100">
-           {!channel.removable ? (
-        <DefaultChannel
-          key={channel.id}
-          channel={channel}
-          handleCurrentChannel={handleCurrentChannel}
-        />
-           ) : (
-        <NewChannel
-          key={channel.id}
-          channel={channel}
-          handleCurrentChannel={handleCurrentChannel}
-          handleRemoveChannel={handleRemoveChannel}
-          handleRenameChannel={handleRenameChannel}
-        />
-           )}
+            {!channel.removable ? (
+             <DefaultChannel
+               key={channel.id}
+               channel={channel}
+               handleCurrentChannel={handleCurrentChannel}
+             />
+            ) : (
+             <NewChannel
+               key={channel.id}
+               channel={channel}
+               handleCurrentChannel={handleCurrentChannel}
+               handleRemoveChannel={handleRemoveChannel}
+               handleRenameChannel={handleRenameChannel}
+             />
+            )}
           </li>
         ))}
       </ul>

@@ -1,5 +1,5 @@
 lint-frontend:
-	make -C frontend lint
+	cd frontend && npx eslint .
 
 install:
 	npm ci
@@ -15,6 +15,3 @@ deploy:
 
 start:
 	make start-backend & make start-frontend
-
-lint:
-	npx eslint .
