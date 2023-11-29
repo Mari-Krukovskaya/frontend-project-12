@@ -33,24 +33,23 @@ const Channels = () => {
   const channelListRef = useRef(null);
   const activeChannelId = useSelector(selectCurrentChannelId);
   const channels = useSelector(selectors.selectAll);
+
   useEffect(() => {
     const container = channelListRef.current;
-    const containerHeight = container.clientHeight;
-    const contentHeight = container.scrollHeight - container.offsetHeight;
-  
-    if (container && contentHeight > containerHeight) {
-      container.scrollTop = contentHeight;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
   }, [channels]);
   
   useEffect(() => {
     const container = channelListRef.current;
-    const containerHeight = container.clientHeight;
-  
-    if (container && channels.length < containerHeight) {
-      container.scrollTop = 0;
+    if (container) {
+      const defaultChannel = channels.find(channel => channel.id === 1);
+      if (!defaultChannel || activeChannelId === 1) {
+        container.scrollTop = 0;
+      }
     }
-  }, [channels]);
+  }, [channels, activeChannelId]);
 
   const handleAddChannel = () => {
     dispatch(
