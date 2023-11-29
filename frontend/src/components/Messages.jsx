@@ -1,4 +1,6 @@
-import React, { useContext, useRef, useEffect, useState } from 'react';
+import React, {
+  useContext, useRef, useEffect, useState 
+} from 'react';
 import { useSelector } from 'react-redux';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import filter from 'leo-profanity';
@@ -16,7 +18,7 @@ import {
 
 const Messages = () => {
   const { t } = useTranslation();
-  const [isSending, setIsSending] = useState(false)
+  const [isSending, setIsSending] = useState(false);
   const refInput = useRef(null);
   const msgRefInput = useRef(null);
   const { emitNewMessage } = useWSocket();

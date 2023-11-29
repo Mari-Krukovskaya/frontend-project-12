@@ -40,11 +40,11 @@ const Channels = () => {
       container.scrollTop = container.scrollHeight;
     }
   }, [channels]);
-  
+
   useEffect(() => {
     const container = channelListRef.current;
     if (container) {
-      const defaultChannel = channels.find(channel => channel.id === 1);
+      const defaultChannel = channels.find((channel) => channel.id === 1);
       if (!defaultChannel || activeChannelId === 1) {
         container.scrollTop = 0;
       }
@@ -93,8 +93,8 @@ const Channels = () => {
         id="channels-box"
         className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
       >
-       {channels.map((channel) => (
-          <li key={channel.id} className="nav-item w-100">
+        {channels.map((channel) => (
+         <li key={channel.id} className="nav-item w-100">
             {!channel.removable ? (
               <DefaultChannel
                 key={channel.id}
@@ -111,7 +111,7 @@ const Channels = () => {
               />
             )}
           </li>
-        ))}
+       ))}
       </ul>
     </div>
   );
