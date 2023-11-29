@@ -33,12 +33,24 @@ const Channels = () => {
   const channelListRef = useRef(null);
   const activeChannelId = useSelector(selectCurrentChannelId);
   const channels = useSelector(selectors.selectAll);
-
   useEffect(() => {
-    if (channelListRef.current) {
-      channelListRef.current.scrollTop = channelListRef.current.scrollHeight;
+    const container = channelListRef.current;
+    const containerHeight = container.clientHeight;
+    const contentHeight = container.scrollHeight - container.offsetHeight;
+  
+    if (container && contentHeight > containerHeight) {
+      container.scrollTop = contentHeight;
     }
-  }, [activeChannelId]);
+  }, [channels]);
+  
+  useEffect(() => {
+    const container = channelListRef.current;
+    const containerHeight = container.clientHeight;
+  
+    if (container && channels.length < containerHeight) {
+      container.scrollTop = 0;
+    }
+  }, [channels]);
 
   const handleAddChannel = () => {
     dispatch(
@@ -82,7 +94,7 @@ const Channels = () => {
         id="channels-box"
         className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
       >
-        {channels.map((channel) => (
+       {channels.map((channel) => (
           <li key={channel.id} className="nav-item w-100">
             {!channel.removable ? (
               <DefaultChannel

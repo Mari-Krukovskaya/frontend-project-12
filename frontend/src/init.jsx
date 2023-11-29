@@ -4,9 +4,9 @@ import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import i18next from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
+import { io } from 'socket.io-client';
 import filter from 'leo-profanity';
 import { Provider as ProviderRoll, ErrorBoundary } from '@rollbar/react';
-
 import store from './slices/store.js';
 import App from './components/App';
 import { AuthProvider } from './contexts/AuthContext.js';
@@ -14,7 +14,8 @@ import resources from './locales/index.js';
 import WSocketProvider from './contexts/SocketContext.js';
 import { channelsActions, messagesActions } from './slices/index.js';
 
-const init = async (socket) => {
+const init = async () => {
+  const socket = io();
   const i18n = i18next.createInstance();
 
   await i18n.use(initReactI18next).init({
@@ -28,14 +29,6 @@ const init = async (socket) => {
 
   filter.add(filter.getDictionary('en'));
   filter.add(filter.getDictionary('ru'));
-
-  socket.on('connect', () => {
-    console.log(socket.connected, 'socket connect');
-  });
-
-  socket.on('disconnect', () => {
-    console.log(socket.connected, 'socket disconnect');
-  });
 
   socket.on('newMessage', (message) => {
     store.dispatch(messagesActions.addMessage(message));
@@ -54,7 +47,7 @@ const init = async (socket) => {
   });
 
   const rollbarConfig = {
-    accessToken: process.env.REACT_APP_ROLLBAR,
+    accessToken: process.env.REACT_APP_ROLLBAR_ACCESS_TOKEN,
     environment: 'testenv',
   };
 

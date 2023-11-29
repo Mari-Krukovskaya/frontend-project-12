@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import filter from 'leo-profanity';
@@ -16,6 +16,7 @@ import {
 
 const Messages = () => {
   const { t } = useTranslation();
+  const [isSending, setIsSending] = useState(false)
   const refInput = useRef(null);
   const msgRefInput = useRef(null);
   const { emitNewMessage } = useWSocket();
@@ -56,10 +57,14 @@ const Messages = () => {
         username: user.username,
       };
       try {
+        setIsSending(true);
         emitNewMessage(message);
+        setIsSending(false);
         formik.resetForm();
       } catch (error) {
         toast.error(`${t('toasts.connectError')}`);
+        setIsSending(false);
+      } finally {
         formik.setSubmitting(false);
       }
     },
@@ -86,7 +91,7 @@ const Messages = () => {
             <div
               key={message.id}
               className="text-break mb-2"
-              style={{ backgroundColor: '#2E9AFF' }}
+              style={{ backgroundColor: '#F4F4F4' }}
             >
               <b>{message.username}</b>
               :
@@ -129,12 +134,12 @@ const Messages = () => {
               ref={refInput}
               onBlur={formik.handleBlur}
               placeholder={t('messages.messagePlaceholder')}
-              disabled={formik.isSubmitting}
+              // disabled={formik.isSubmitting}
             />
             <Button
               type="submit"
               variant="group-vertical"
-              disabled={formik.disabled}
+              disabled={!formik.values.body.length || isSending}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

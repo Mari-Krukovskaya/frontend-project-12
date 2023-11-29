@@ -3,11 +3,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import init from './init.jsx';
-import socket from './socket.js';
 
 const app = async () => {
   const root = ReactDOM.createRoot(document.getElementById('chat'));
-  root.render(await init(socket));
+  root.render(await init());
 };
 
 app();
