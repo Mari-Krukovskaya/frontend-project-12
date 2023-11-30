@@ -94,8 +94,8 @@ const Channels = () => {
         className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
       >
         {channels.map((channel) => (
-         <li key={channel.id} className="nav-item w-100">
-            {!channel.removable ? (
+          <li key={channel.id} className="nav-item w-100">
+           {!channel.removable ? (
               <DefaultChannel
                 key={channel.id}
                 channel={channel}
@@ -110,8 +110,8 @@ const Channels = () => {
                 handleRenameChannel={handleRenameChannel}
               />
             )}
-          </li>
-       ))}
+         </li>
+        ))}
       </ul>
     </div>
   );
