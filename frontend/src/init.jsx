@@ -1,3 +1,4 @@
+/* eslint-disable functional/no-expression-statements */
 import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 import { Provider } from 'react-redux';

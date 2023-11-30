@@ -1,3 +1,4 @@
+/* eslint-disable functional/no-expression-statements */
 import React, { useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';

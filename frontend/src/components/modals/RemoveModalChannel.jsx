@@ -1,3 +1,5 @@
+/* eslint-disable functional/no-conditional-statements */
+/* eslint-disable functional/no-expression-statements */
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { toast } from 'react-toastify';

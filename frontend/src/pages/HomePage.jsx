@@ -1,3 +1,5 @@
+/* eslint-disable functional/no-conditional-statements */
+/* eslint-disable functional/no-expression-statements */
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

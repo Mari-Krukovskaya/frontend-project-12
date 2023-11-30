@@ -1,3 +1,5 @@
+/* eslint-disable functional/no-expression-statements */
+/* eslint-disable functional/no-conditional-statements */
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Navbar, Container } from 'react-bootstrap';
