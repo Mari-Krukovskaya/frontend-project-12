@@ -1,3 +1,4 @@
+/* eslint-disable functional/no-expression-statements */
 import React, {
   createContext, useState, useMemo, useCallback,
 } from 'react';
