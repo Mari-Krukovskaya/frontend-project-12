@@ -5,16 +5,16 @@ import NotFoundPage from '../pages/NotFoundPage.jsx';
 import HomePage from '../pages/HomePage.jsx';
 import Nav from './NavBar.jsx';
 import SignUpForm from '../pages/SignUpForm.jsx';
-import api from '../routes/api.js';
+import routes from '../routes.js';
 
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path={api.home()} element={<Nav />}>
+      <Route path={routes.home()} element={<Nav />}>
         <Route index element={<HomePage />} />
-        <Route path={api.login()} element={<Login />} />
-        <Route path={api.signUp()} element={<SignUpForm />} />
-        <Route path={api.error()} element={<NotFoundPage />} />
+        <Route path={routes.login()} element={<Login />} />
+        <Route path={routes.signUp()} element={<SignUpForm />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   </BrowserRouter>

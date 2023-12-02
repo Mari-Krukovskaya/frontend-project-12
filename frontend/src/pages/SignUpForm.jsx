@@ -13,7 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
-import api from '../routes/api.js';
+import routes from '../routes.js';
 import signUp from '../images/signUp.jpg';
 import { AuthContext } from '../contexts/AuthContext.js';
 
@@ -57,12 +57,12 @@ const SignUpForm = () => {
       formik.setSubmitting(true);
       setAuthError(false);
       try {
-        const { data } = await axios.post(api.signUpPath(), {
+        const { data } = await axios.post(routes.signUpPath(), {
           username: values.username,
           password: values.password,
         });
         login(data);
-        navigate(api.home());
+        navigate(routes.home());
       } catch (error) {
         formik.setSubmitting(false);
         if (error.isAxiosError && error.response.status === 409) {

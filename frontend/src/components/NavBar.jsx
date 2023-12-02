@@ -4,9 +4,8 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Navbar, Container } from 'react-bootstrap';
 import { useNavigate, Outlet } from 'react-router-dom';
-
+import routes from '../routes.js';
 import { AuthContext } from '../contexts/AuthContext.js';
-import api from '../routes/api';
 
 const Nav = () => {
   const { t } = useTranslation();
@@ -17,14 +16,14 @@ const Nav = () => {
     if (user) {
       logout();
     }
-    navigate(api.login());
+    navigate(routes.login());
   };
 
   return (
     <div className="d-flex flex-column h-100">
       <Navbar className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
         <Container>
-          <Navbar.Brand href="/" className="navbar-brand">
+          <Navbar.Brand href={routes.home()} className="navbar-brand">
             {t('nav.chat')}
           </Navbar.Brand>
           <Navbar.Collapse className="justify-content-end" />

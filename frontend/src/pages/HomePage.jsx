@@ -12,7 +12,7 @@ import Messages from '../components/Messages.jsx';
 import ShowModal from '../components/modals/index.jsx';
 import { messagesActions, channelsActions } from '../slices/index.js';
 import { AuthContext } from '../contexts/AuthContext.js';
-import api from '../routes/api.js';
+import routes from '../routes.js';
 
 const getAuthHeader = (data) => {
   if (data && data.token) {
@@ -30,7 +30,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user) {
-        navigate(api.login(), { replace: false });
+        navigate(routes.login(), { replace: false });
         return;
       }
       try {
@@ -39,14 +39,14 @@ const HomePage = () => {
         };
         const {
           data: { channels, messages, currentChannelId },
-        } = await axios.get(api.dataPath(), userData);
+        } = await axios.get(routes.dataPath(), userData);
         dispatch(channelsActions.addManyChannels(channels));
         dispatch(channelsActions.setCurrentChannelId(currentChannelId));
         dispatch(messagesActions.addManyMessages(messages));
       } catch (error) {
         if (error.isAxiosError && error.response.status === 401) {
           logout();
-          navigate(api.login(), { replace: false });
+          navigate(routes.login(), { replace: false });
         }
         console.log(error);
         toast.error(t('toasts.connectError'));

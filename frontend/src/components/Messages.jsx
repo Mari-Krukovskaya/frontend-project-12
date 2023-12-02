@@ -138,7 +138,6 @@ const Messages = () => {
               ref={refInput}
               onBlur={formik.handleBlur}
               placeholder={t('messages.messagePlaceholder')}
-              // disabled={formik.isSubmitting}
             />
             <Button
               type="submit"

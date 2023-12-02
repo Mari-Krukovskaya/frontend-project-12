@@ -17,7 +17,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 import { AuthContext } from '../contexts/AuthContext.js';
-import api from '../routes/api.js';
+import routes from '../routes.js';
 import entry from '../images/entry.jpg';
 
 const Login = () => {
@@ -44,12 +44,12 @@ const Login = () => {
       formik.setSubmitting(true);
       setAuthError(false);
       try {
-        const { data } = await axios.post(api.loginPath(), {
+        const { data } = await axios.post(routes.loginPath(), {
           username: values.username,
           password: values.password,
         });
         login(data);
-        navigate(api.home(), { replace: false });
+        navigate(routes.home(), { replace: false });
       } catch (error) {
         formik.setSubmitting(false);
         if (error.isAxiosError && error.response.status === 401) {
@@ -142,7 +142,7 @@ const Login = () => {
               <div className="text-center">
                 <span>{t('authForm.noAcc')}</span>
                 {' '}
-                <Link to={api.signUp()}>{t('authForm.signUp')}</Link>
+                <Link to={routes.signUp()}>{t('authForm.signUp')}</Link>
               </div>
             </Card.Footer>
           </Card>

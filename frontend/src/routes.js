@@ -7,5 +7,4 @@ export default {
   home: () => '/',
   login: () => '/login',
   signUp: () => '/signup',
-  error: () => '*',
 };
